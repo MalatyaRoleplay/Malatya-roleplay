@@ -726,18 +726,21 @@
         }
 
         .chat-admin-toggle {
-            display: none;
-            width: 100%;
-            text-align: center;
-            padding: 8px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-size: 0.6rem;
-            color: rgba(255,255,255,0.1);
-            letter-spacing: 2px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 1px;
             transition: color 0.3s ease;
+            border-radius: 6px;
+            flex-shrink: 0;
         }
 
-        .chat-admin-toggle:hover { color: rgba(255,255,255,0.25); }
+        .chat-admin-toggle:hover { color: #ff3d00; background: rgba(255,52,52,0.1); }
 
         @media (max-width: 900px) {
             .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid rgba(58,134,255,0.08); }
