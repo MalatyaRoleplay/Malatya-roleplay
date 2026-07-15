@@ -1022,6 +1022,16 @@
                 </div>
             </div>
 
+            <div class="chat-section" id="aktif-kisiler" style="margin-bottom: 30px;">
+                <div class="chat-box" style="max-width: 400px;">
+                    <div class="chat-header">
+                        <div class="chat-header-dot" style="background:#00e676;"></div>
+                        <div class="chat-header-title">SITEDEKILER</div>
+                        <div class="chat-header-count" id="activeUsersCount" style="color:#00e676;font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.9rem;">0</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="stats">
                 <div class="stat">
                     <div class="stat-num" id="onlineCount">150+</div>
@@ -1054,6 +1064,16 @@
             appId: "1:162600000014:web:bbd69fab110cd6657a3a5f"
         });
         const db = firebase.database();
+
+        const myId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const myRef = db.ref('online/' + myId);
+        const onlineRef = db.ref('online');
+        myRef.set(true);
+        myRef.onDisconnect().remove();
+        onlineRef.on('value', snap => {
+            const count = snap.numChildren();
+            document.getElementById('activeUsersCount').textContent = count;
+        });
 
         const c = document.getElementById('canvas');
         const ctx = c.getContext('2d');
