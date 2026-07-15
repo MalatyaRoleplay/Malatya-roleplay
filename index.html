@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malatya Roleplay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0f;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0f, #1a0a2e, #0f1a2e, #0a0a0f);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            z-index: -3;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Particle canvas */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: floatOrb 6s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ff006e, transparent);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #3a86ff, transparent);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 2s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #8338ec, transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 4s;
+        }
+
+        .orb-4 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #ffbe0b, transparent);
+            top: 20%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        .orb-5 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #00f5d4, transparent);
+            bottom: 20%;
+            left: 10%;
+            animation-delay: 3s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 30px) scale(1.05); }
+        }
+
+        /* Lightning effect */
+        .lightning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Main content */
+        .main-container {
+            text-align: center;
+            z-index: 10;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Logo glow */
+        .logo-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.3), transparent 70%);
+            border-radius: 50%;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+
+        /* Title */
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff006e, #ffbe0b, #00f5d4, #3a86ff, #8338ec, #ff006e);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGradient 4s ease infinite;
+            text-shadow: none;
+            position: relative;
+            letter-spacing: 4px;
+            line-height: 1.1;
+        }
+
+        .title::after {
+            content: 'MALATYA ROLEPLAY';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #ff006e, #ffbe0b, #00f5d4, #3a86ff, #8338ec, #ff006e);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGradient 4s ease infinite;
+            filter: blur(30px);
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        @keyframes titleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            animation: fadeInUp 1s ease 0.5s both;
+        }
+
+        /* Divider line */
+        .divider {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff006e, #3a86ff, #00f5d4, transparent);
+            margin: 30px auto;
+            position: relative;
+            animation: fadeInUp 1s ease 0.8s both;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, transparent, #ff006e, #3a86ff, #00f5d4, transparent);
+            filter: blur(6px);
+        }
+
+        /* Team Section */
+        .team-section {
+            margin: 30px auto;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .team-owner {
+            margin-bottom: 15px;
+        }
+
+        .team-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .team-name-owner {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffbe0b, #ff006e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 3px;
+        }
+
+        .team-admins {
+            margin-top: 12px;
+        }
+
+        .team-admins .team-label {
+            margin-bottom: 8px;
+        }
+
+        .team-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 10px;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .team-name:hover {
+            color: #3a86ff;
+            text-shadow: 0 0 20px rgba(58, 134, 255, 0.5);
+        }
+
+        /* EXA Section */
+        .exa-section {
+            margin: 35px auto 10px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(138, 43, 226, 0.1));
+            border: 1px solid rgba(255, 0, 110, 0.2);
+            border-radius: 16px;
+            display: inline-block;
+            animation: fadeInUp 1s ease 0.8s both;
+        }
+
+        .exa-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff006e, #8338ec, #ffbe0b);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGradient 3s ease infinite;
+            letter-spacing: 5px;
+        }
+
+        .exa-owner {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 3px;
+            margin-top: 8px;
+        }
+
+        /* Description */
+        .description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.5);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+            animation: fadeInUp 1s ease 1s both;
+        }
+
+        /* Discord Button */
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #5865F2, #7289DA);
+            color: white;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border-radius: 60px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(88, 101, 242, 0.5);
+            text-transform: uppercase;
+            animation: fadeInUp 1s ease 1.2s both, btnFloat 4s ease-in-out infinite 2s;
+            cursor: pointer;
+        }
+
+        .discord-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: btnShine 3s ease-in-out infinite;
+        }
+
+        .discord-btn::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: linear-gradient(135deg, #ff006e, #3a86ff, #00f5d4, #ffbe0b, #8338ec);
+            border-radius: 60px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            filter: blur(10px);
+        }
+
+        .discord-btn:hover::after {
+            opacity: 1;
+        }
+
+        .discord-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 40px rgba(88, 101, 242, 0.5), 0 0 80px rgba(88, 101, 242, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .discord-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        @keyframes btnShine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            50%, 100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        /* Roblox Button */
+        .roblox-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #e2231a, #ff4444);
+            color: white;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border-radius: 60px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(226, 35, 26, 0.5);
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .roblox-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: btnShine 3s ease-in-out infinite;
+        }
+
+        .roblox-btn::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: linear-gradient(135deg, #ff006e, #ff4444, #ffbe0b, #e2231a, #ff006e);
+            border-radius: 60px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            filter: blur(10px);
+        }
+
+        .roblox-btn:hover::after {
+            opacity: 1;
+        }
+
+        .roblox-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 40px rgba(226, 35, 26, 0.5), 0 0 80px rgba(226, 35, 26, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .roblox-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .roblox-btn-2 {
+            background: linear-gradient(135deg, #00b06f, #1ed760);
+            border: 2px solid rgba(0, 176, 111, 0.5);
+        }
+
+        .roblox-btn-2::after {
+            background: linear-gradient(135deg, #00f5d4, #1ed760, #00b06f, #3a86ff, #00f5d4);
+        }
+
+        .roblox-btn-2:hover {
+            box-shadow: 0 10px 40px rgba(0, 176, 111, 0.5), 0 0 80px rgba(0, 176, 111, 0.3);
+        }
+
+        .roblox-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .server-code {
+            margin-top: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease 1.5s both;
+        }
+
+        .server-code span {
+            color: #ff4444;
+            font-weight: 700;
+            background: rgba(226, 35, 26, 0.1);
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(226, 35, 26, 0.3);
+            letter-spacing: 3px;
+        }
+
+        @keyframes btnFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Discord icon */
+        .discord-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Corner badge */
+        .corner-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            z-index: 100;
+            animation: fadeInUp 1s ease 2.2s both;
+            transition: all 0.3s ease;
+        }
+
+        .corner-badge:hover {
+            color: rgba(255, 255, 255, 0.8);
+            border-color: rgba(138, 43, 226, 0.5);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .corner-badge span {
+            color: #8338ec;
+            font-weight: 700;
+        }
+
+        /* Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+        }
+
+        /* Grid lines */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(58, 134, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(58, 134, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(0deg); }
+            100% { transform: perspective(500px) rotateX(0deg) translateY(60px); }
+        }
+
+        /* Floating particles styling */
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Stats section */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 50px;
+            animation: fadeInUp 1s ease 1.8s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff006e, #ffbe0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 6px;
+            }
+            .discord-btn {
+                padding: 15px 35px;
+                font-size: 0.9rem;
+            }
+            .roblox-btn {
+                padding: 15px 35px;
+                font-size: 0.9rem;
+            }
+            .stats {
+                gap: 30px;
+            }
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            .corner-badge {
+                bottom: 10px;
+                right: 10px;
+                font-size: 0.75rem;
+                padding: 8px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-bg"></div>
+    <canvas id="particles"></canvas>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="orb orb-5"></div>
+
+    <div class="scanlines"></div>
+
+    <div class="main-container">
+        <div class="logo-wrapper">
+            <div class="logo-glow"></div>
+        </div>
+
+        <h1 class="title">MALATYA ROLEPLAY</h1>
+        <p class="subtitle">Roleplay Dunyasina Adim At</p>
+
+        <div class="divider"></div>
+
+        <div class="team-section">
+            <div class="team-owner">
+                <span class="team-label">Kurucumuz</span> <span class="team-name-owner">EnsarTR</span>
+            </div>
+            <div class="team-admins">
+                <span class="team-label">Yönetim</span>
+                <span class="team-name">Rylo</span>
+                <span class="team-name">Vanguard</span>
+                <span class="team-name">EnsarTR</span>
+            </div>
+        </div>
+
+        <div class="exa-section">
+            <div class="exa-title">EXA KURUCUMUZ</div>
+            <div class="exa-owner">oyunbaz19</div>
+        </div>
+
+        <p class="description">
+            Eglenceli, aksiyonlu ve keyifli bir roleplay deneyimi icin dogru yerdesin.
+            Hemen aramiza katil ve maceran baslasin!
+        </p>
+
+        <a href="https://discord.gg/wqhkDCqZr" target="_blank" rel="noopener noreferrer" class="discord-btn">
+            <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+            </svg>
+            Discord Sunucumuz
+        </a>
+
+        <div style="margin-top: 25px; animation: fadeInUp 1s ease 1.35s both;">
+            <a href="https://www.roblox.com/share?v=v2&code=5ihdm3h6mlhaxt" target="_blank" rel="noopener noreferrer" class="roblox-btn">
+                <svg class="roblox-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                    <path d="M5.164 0L0 18.966 18.836 24 24 5.034 5.164 0zM8.912 15.531l-3.748-1.034L15.088 8.47 8.912 15.531z"/>
+                </svg>
+                Roblox Sunucumuza Katıl!
+            </a>
+            <div class="server-code">
+                Roblox Sunucu Kodumuz: <span>tav5zag0</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; animation: fadeInUp 1s ease 1.5s both;">
+            <a href="https://www.roblox.com/share?v=v2&code=5ihdm3h6jrra6n" target="_blank" rel="noopener noreferrer" class="roblox-btn roblox-btn-2">
+                <svg class="roblox-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                    <path d="M5.164 0L0 18.966 18.836 24 24 5.034 5.164 0zM8.912 15.531l-3.748-1.034L15.088 8.47 8.912 15.531z"/>
+                </svg>
+                2. Sunucumuza Katıl!
+            </a>
+            <div class="server-code">
+                2. Sunucu Kodumuz: <span>ju64828k</span>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="onlineCount">150+</div>
+                <div class="stat-label">Online Oyuncu</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Acik Sunucu</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">250+</div>
+                <div class="stat-label">Uye</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="corner-badge">
+        Made by <span>Rylo</span>
+    </div>
+
+    <script>
+        // Particle system
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const particles = [];
+        const colors = ['#ff006e', '#3a86ff', '#00f5d4', '#ffbe0b', '#8338ec'];
+
+        for (let i = 0; i < 80; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 2 + 0.5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                alpha: Math.random() * 0.5 + 0.1
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.alpha;
+                ctx.fill();
+
+                // Connect nearby particles
+                particles.forEach((p2, j) => {
+                    if (i === j) return;
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = p.color;
+                        ctx.globalAlpha = (1 - dist / 120) * 0.15;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                });
+            });
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        // Mouse interaction
+        document.addEventListener('mousemove', (e) => {
+            particles.forEach(p => {
+                const dx = e.clientX - p.x;
+                const dy = e.clientY - p.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 150) {
+                    const force = (150 - dist) / 150;
+                    p.vx -= (dx / dist) * force * 0.02;
+                    p.vy -= (dy / dist) * force * 0.02;
+                }
+            });
+        });
+
+        // Random lightning flash
+        function lightningFlash() {
+            const flash = document.createElement('div');
+            flash.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(ellipse at ${Math.random() * 100}% ${Math.random() * 100}%,
+                    rgba(138, 43, 226, 0.1), transparent 70%);
+                pointer-events: none;
+                z-index: 1;
+                animation: flashFade 0.5s ease-out forwards;
+            `;
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 500);
+        }
+
+        // Add flash animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes flashFade {
+                0% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        setInterval(lightningFlash, 3000 + Math.random() * 4000);
+
+        // Typing effect for stats
+        function animateNumber(element, target, suffix = '') {
+            let current = 0;
+            const increment = target / 60;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + suffix;
+            }, 30);
+        }
+
+        // Trigger stat animations on load
+        setTimeout(() => {
+            animateNumber(document.getElementById('onlineCount'), 150, '+');
+        }, 2000);
+    </script>
+</body>
+</html>
