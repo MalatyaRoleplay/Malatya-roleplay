@@ -872,7 +872,20 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyBbmMoZyICIBLGEC6X379LTmrnFbmrLIaA",
+            authDomain: "malatya-rp-chat.firebaseapp.com",
+            databaseURL: "https://malatya-rp-chat-default-rtdb.firebaseio.com",
+            projectId: "malatya-rp-chat",
+            storageBucket: "malatya-rp-chat.firebasestorage.app",
+            messagingSenderId: "162600000014",
+            appId: "1:162600000014:web:bbd69fab110cd6657a3a5f"
+        });
+        const db = firebase.database();
+
         const c = document.getElementById('canvas');
         const ctx = c.getContext('2d');
         function resize() { c.width = innerWidth; c.height = innerHeight; }
@@ -938,7 +951,6 @@
         const chatSend = document.getElementById('chatSend');
         const chatCount = document.getElementById('chatCount');
 
-        let messages = JSON.parse(localStorage.getItem('malatya_chat') || '[]');
         const nameColors = ['#3a86ff','#00e676','#ff3d00','#ffab00','#aa00ff','#00bfa5','#ff6d00','#6200ea'];
 
         function getColor(name) {
@@ -955,14 +967,15 @@
             return Math.floor(diff/86400000) + ' gun once';
         }
 
-        function renderMessages() {
-            if (messages.length === 0) {
+        function renderMessages(msgs) {
+            if (!msgs || Object.keys(msgs).length === 0) {
                 chatMessages.innerHTML = '<div class="chat-empty">Henuz mesaj yok. Ilk mesaji sen gonder!</div>';
                 chatCount.textContent = '0 mesaj';
                 return;
             }
-            chatCount.textContent = messages.length + ' mesaj';
-            chatMessages.innerHTML = messages.map(m => `
+            const arr = Object.values(msgs).sort((a,b) => a.ts - b.ts);
+            chatCount.textContent = arr.length + ' mesaj';
+            chatMessages.innerHTML = arr.map(m => `
                 <div class="chat-msg">
                     <div class="chat-msg-avatar" style="color:${getColor(m.name)};border-color:${getColor(m.name)}22;background:${getColor(m.name)}11">${m.name.charAt(0).toUpperCase()}</div>
                     <div class="chat-msg-body">
@@ -975,20 +988,18 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        db.ref('messages').on('value', snap => renderMessages(snap.val()));
+
         function sendMessage() {
             const name = chatName.value.trim();
             const text = chatMsg.value.trim();
             if (!name || !text) return;
-            messages.push({ name, text, ts: Date.now() });
-            if (messages.length > 100) messages = messages.slice(-100);
-            localStorage.setItem('malatya_chat', JSON.stringify(messages));
+            db.ref('messages').push({ name, text, ts: Date.now() });
             chatMsg.value = '';
-            renderMessages();
         }
 
         chatSend.addEventListener('click', sendMessage);
         chatMsg.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-        renderMessages();
     </script>
 </body>
 </html>
