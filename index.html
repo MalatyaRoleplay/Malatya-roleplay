@@ -591,6 +591,154 @@
             letter-spacing: 2px;
         }
 
+        .chat-admin-bar {
+            padding: 10px 20px;
+            background: rgba(255,52,52,0.05);
+            border-bottom: 1px solid rgba(255,52,52,0.1);
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-admin-bar.active { display: flex; }
+
+        .chat-admin-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem; font-weight: 700;
+            color: #ff3d00; letter-spacing: 2px;
+        }
+
+        .chat-admin-btn {
+            padding: 6px 14px;
+            background: rgba(255,52,52,0.1);
+            border: 1px solid rgba(255,52,52,0.2);
+            border-radius: 6px;
+            color: #ff3d00;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem; font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-admin-btn:hover {
+            background: rgba(255,52,52,0.2);
+        }
+
+        .chat-msg-delete {
+            display: none;
+            padding: 4px 8px;
+            background: rgba(255,52,52,0.1);
+            border: 1px solid rgba(255,52,52,0.2);
+            border-radius: 4px;
+            color: #ff3d00;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .chat-msg-delete:hover {
+            background: rgba(255,52,52,0.3);
+        }
+
+        .admin-mode .chat-msg-delete { display: block; }
+
+        .chat-login-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-login-overlay.active { display: flex; }
+
+        .chat-login-box {
+            background: rgba(10,14,30,0.98);
+            border: 1px solid rgba(255,52,52,0.15);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+        }
+
+        .chat-login-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem; font-weight: 700;
+            color: #ff3d00; letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .chat-login-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,52,52,0.05);
+            border: 1px solid rgba(255,52,52,0.15);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .chat-login-input:focus { border-color: rgba(255,52,52,0.4); }
+        .chat-login-input::placeholder { color: rgba(255,255,255,0.2); }
+
+        .chat-login-btns { display: flex; gap: 10px; justify-content: center; }
+        .chat-login-btns button {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid;
+        }
+
+        .chat-login-ok {
+            background: rgba(255,52,52,0.1);
+            border-color: rgba(255,52,255,0.25);
+            color: #ff3d00;
+        }
+
+        .chat-login-ok:hover { background: rgba(255,52,52,0.2); }
+
+        .chat-login-cancel {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.3);
+        }
+
+        .chat-login-cancel:hover { background: rgba(255,255,255,0.1); }
+
+        .chat-login-error {
+            font-size: 0.75rem;
+            color: #ff3d00;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .chat-admin-toggle {
+            display: none;
+            width: 100%;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.1);
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .chat-admin-toggle:hover { color: rgba(255,255,255,0.25); }
+
         @media (max-width: 900px) {
             .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid rgba(58,134,255,0.08); }
             .sb-logo, .sb-divider, .sb-bottom, .sb-section-title, .sb-server, .sb-info-row { display: none; }
@@ -836,11 +984,17 @@
             </section>
 
             <section class="chat-section" id="sohbet">
-                <div class="chat-box">
+                <div class="chat-box" id="chatBox">
                     <div class="chat-header">
                         <div class="chat-header-dot"></div>
                         <div class="chat-header-title">SOHBET</div>
                         <div class="chat-header-count" id="chatCount">0 mesaj</div>
+                        <div class="chat-admin-toggle" id="chatAdminToggle" title="Admin Giris">●●●</div>
+                    </div>
+                    <div class="chat-admin-bar" id="chatAdminBar">
+                        <div class="chat-admin-label">YETKILI MODU</div>
+                        <button class="chat-admin-btn" id="chatClearAll">HEPSINI SIL</button>
+                        <button class="chat-admin-btn" id="chatAdminLogout" style="color:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);">CIKIS</button>
                     </div>
                     <div class="chat-messages" id="chatMessages">
                         <div class="chat-empty">Henuz mesaj yok. Ilk mesaji sen gonder!</div>
@@ -852,6 +1006,18 @@
                     </div>
                 </div>
             </section>
+
+            <div class="chat-login-overlay" id="chatLoginOverlay">
+                <div class="chat-login-box">
+                    <div class="chat-login-title">YETKILI GIRISI</div>
+                    <div class="chat-login-error" id="chatLoginError">Yanlis sifre!</div>
+                    <input type="password" class="chat-login-input" id="chatLoginPass" placeholder="Sifreni gir...">
+                    <div class="chat-login-btns">
+                        <button class="chat-login-cancel" id="chatLoginCancel">IPTAL</button>
+                        <button class="chat-login-ok" id="chatLoginOk">GIRIS</button>
+                    </div>
+                </div>
+            </div>
 
             <div class="stats">
                 <div class="stat">
@@ -967,15 +1133,51 @@
             return Math.floor(diff/86400000) + ' gun once';
         }
 
+        let isAdmin = false;
+        const ADMIN_PASS = 'rylo2025';
+        const chatAdminToggle = document.getElementById('chatAdminToggle');
+        const chatAdminBar = document.getElementById('chatAdminBar');
+        const chatLoginOverlay = document.getElementById('chatLoginOverlay');
+        const chatLoginPass = document.getElementById('chatLoginPass');
+        const chatLoginOk = document.getElementById('chatLoginOk');
+        const chatLoginCancel = document.getElementById('chatLoginCancel');
+        const chatLoginError = document.getElementById('chatLoginError');
+        const chatClearAll = document.getElementById('chatClearAll');
+        const chatAdminLogout = document.getElementById('chatAdminLogout');
+
+        chatAdminToggle.addEventListener('click', () => {
+            if (isAdmin) { isAdmin = false; chatAdminBar.classList.remove('active'); document.getElementById('chatBox').classList.remove('admin-mode'); renderMessages(lastMsgs); return; }
+            chatLoginOverlay.classList.add('active');
+            chatLoginPass.value = '';
+            chatLoginError.style.display = 'none';
+            chatLoginPass.focus();
+        });
+
+        chatLoginOk.addEventListener('click', () => {
+            if (chatLoginPass.value === ADMIN_PASS) {
+                isAdmin = true; chatLoginOverlay.classList.remove('active'); chatAdminBar.classList.add('active');
+                document.getElementById('chatBox').classList.add('admin-mode'); renderMessages(lastMsgs);
+            } else { chatLoginError.style.display = 'block'; }
+        });
+
+        chatLoginPass.addEventListener('keydown', e => { if (e.key === 'Enter') chatLoginOk.click(); });
+        chatLoginCancel.addEventListener('click', () => chatLoginOverlay.classList.remove('active'));
+        chatAdminLogout.addEventListener('click', () => { isAdmin = false; chatAdminBar.classList.remove('active'); document.getElementById('chatBox').classList.remove('admin-mode'); renderMessages(lastMsgs); });
+        chatClearAll.addEventListener('click', () => { if (confirm('TUM MESAJLARI SILMEK ISTEDIGINE EMIN MISIN?')) { db.ref('messages').remove(); } });
+
+        function deleteMsg(key) { if (confirm('Bu mesaji silmek istedigine emin misin?')) { db.ref('messages/' + key).remove(); } }
+
+        let lastMsgs = {};
         function renderMessages(msgs) {
+            lastMsgs = msgs || {};
             if (!msgs || Object.keys(msgs).length === 0) {
                 chatMessages.innerHTML = '<div class="chat-empty">Henuz mesaj yok. Ilk mesaji sen gonder!</div>';
                 chatCount.textContent = '0 mesaj';
                 return;
             }
-            const arr = Object.values(msgs).sort((a,b) => a.ts - b.ts);
-            chatCount.textContent = arr.length + ' mesaj';
-            chatMessages.innerHTML = arr.map(m => `
+            const entries = Object.entries(msgs).sort((a,b) => a[1].ts - b[1].ts);
+            chatCount.textContent = entries.length + ' mesaj';
+            chatMessages.innerHTML = entries.map(([key, m]) => `
                 <div class="chat-msg">
                     <div class="chat-msg-avatar" style="color:${getColor(m.name)};border-color:${getColor(m.name)}22;background:${getColor(m.name)}11">${m.name.charAt(0).toUpperCase()}</div>
                     <div class="chat-msg-body">
@@ -983,6 +1185,7 @@
                         <div class="chat-msg-text">${m.text}</div>
                         <div class="chat-msg-time">${timeAgo(m.ts)}</div>
                     </div>
+                    <button class="chat-msg-delete" onclick="deleteMsg('${key}')">SIL</button>
                 </div>
             `).join('');
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -990,10 +1193,32 @@
 
         db.ref('messages').on('value', snap => renderMessages(snap.val()));
 
+        const kufurListesi = [
+            'amk','amq','amck','aq','mk','sik','sicak','sg','sikerim','sikir',
+            'orospu','orusbu','orospu cocugu','oc','orospu_cocugu','serefsiz','şerefsiz',
+            'pezevenk','pezo','got','göt','götveren','am','amcik','amcık','amq',
+            'amına','amina','amini','amina_koyim','amina koyim','koyim','koyum',
+            'piç','pic','picus','yavşak','yavak','bok','bitch','fuck','shit','ass',
+            'damn','hell','stfu','dumbass','motherfucker','asshole','retard','idiot',
+            'geri','zeka','salak','mal','dangalak','dangalak','gerizekali','gotu',
+            'amcik','amcik','ibne','kevase','peze','sikik','dalyarak','dalyarrak',
+            'kerhane','orosbu','gotu','amını','amına','orospu','sikiş','sikis'
+        ];
+
+        function filtrele(text) {
+            let filtered = text;
+            kufurListesi.forEach(k => {
+                const regex = new RegExp(k, 'gi');
+                filtered = filtered.replace(regex, '*'.repeat(k.length));
+            });
+            return filtered;
+        }
+
         function sendMessage() {
             const name = chatName.value.trim();
-            const text = chatMsg.value.trim();
+            let text = chatMsg.value.trim();
             if (!name || !text) return;
+            text = filtrele(text);
             db.ref('messages').push({ name, text, ts: Date.now() });
             chatMsg.value = '';
         }
