@@ -1344,7 +1344,7 @@
             return Math.floor(diff/86400000) + ' gun once';
         }
 
-        let isAdmin = false;
+        let isAdmin = localStorage.getItem('mrp_admin') === 'true';
         const ADMIN_PASS = 'rylo2025';
         const chatAdminToggle = document.getElementById('chatAdminToggle');
         const chatAdminBar = document.getElementById('chatAdminBar');
@@ -1356,8 +1356,15 @@
         const chatClearAll = document.getElementById('chatClearAll');
         const chatAdminLogout = document.getElementById('chatAdminLogout');
 
+        if (isAdmin) {
+            chatAdminBar.classList.add('active');
+            document.getElementById('chatBox').classList.add('admin-mode');
+            showAdminFeatures(true);
+            renderMessages(lastMsgs);
+        }
+
         chatAdminToggle.addEventListener('click', () => {
-            if (isAdmin) { isAdmin = false; chatAdminBar.classList.remove('active'); document.getElementById('chatBox').classList.remove('admin-mode'); showAdminFeatures(false); renderMessages(lastMsgs); return; }
+            if (isAdmin) { isAdmin = false; localStorage.removeItem('mrp_admin'); chatAdminBar.classList.remove('active'); document.getElementById('chatBox').classList.remove('admin-mode'); showAdminFeatures(false); renderMessages(lastMsgs); return; }
             chatLoginOverlay.classList.add('active');
             chatLoginPass.value = '';
             chatLoginError.style.display = 'none';
@@ -1366,14 +1373,14 @@
 
         chatLoginOk.addEventListener('click', () => {
             if (chatLoginPass.value === ADMIN_PASS) {
-                isAdmin = true; chatLoginOverlay.classList.remove('active'); chatAdminBar.classList.add('active');
+                isAdmin = true; localStorage.setItem('mrp_admin', 'true'); chatLoginOverlay.classList.remove('active'); chatAdminBar.classList.add('active');
                 document.getElementById('chatBox').classList.add('admin-mode'); showAdminFeatures(true); renderMessages(lastMsgs);
             } else { chatLoginError.style.display = 'block'; }
         });
 
         chatLoginPass.addEventListener('keydown', e => { if (e.key === 'Enter') chatLoginOk.click(); });
         chatLoginCancel.addEventListener('click', () => chatLoginOverlay.classList.remove('active'));
-        chatAdminLogout.addEventListener('click', () => { isAdmin = false; chatAdminBar.classList.remove('active'); document.getElementById('chatBox').classList.remove('admin-mode'); showAdminFeatures(false); renderMessages(lastMsgs); });
+        chatAdminLogout.addEventListener('click', () => { isAdmin = false; localStorage.removeItem('mrp_admin'); chatAdminBar.classList.remove('active'); document.getElementById('chatBox').classList.remove('admin-mode'); showAdminFeatures(false); renderMessages(lastMsgs); });
         chatClearAll.addEventListener('click', () => { if (confirm('TUM MESAJLARI SILMEK ISTEDIGINE EMIN MISIN?')) { db.ref('messages').remove(); } });
 
         function deleteMsg(key) { if (confirm('Bu mesaji silmek istedigine emin misin?')) { db.ref('messages/' + key).remove(); } }
