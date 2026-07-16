@@ -1353,17 +1353,17 @@
 
         const savedName = localStorage.getItem('mrp_chatname') || '';
         chatName.value = savedName;
-        if (savedName) updateRoleFeatures();
+        if (savedName) { try { updateRoleFeatures(); } catch(e) {} }
 
         chatName.addEventListener('input', () => {
             localStorage.setItem('mrp_chatname', chatName.value.trim());
-            updateRoleFeatures();
+            try { updateRoleFeatures(); } catch(e) {}
         });
 
         rolesRef.on('value', snap => {
             allRoles = snap.val() || {};
             renderRoles();
-            updateRoleFeatures();
+            try { updateRoleFeatures(); } catch(e) {}
         });
 
         const nameColors = ['#3a86ff','#00e676','#ff3d00','#ffab00','#aa00ff','#00bfa5','#ff6d00','#6200ea'];
@@ -1487,12 +1487,16 @@
         }
 
         function sendMessage() {
-            const name = chatName.value.trim();
-            let text = chatMsg.value.trim();
-            if (!name || !text) return;
-            text = filtrele(text);
-            db.ref('messages').push({ name, text, ts: Date.now() });
-            chatMsg.value = '';
+            try {
+                const name = chatName.value.trim();
+                let text = chatMsg.value.trim();
+                if (!name || !text) return;
+                text = filtrele(text);
+                db.ref('messages').push({ name: name, text: text, ts: Date.now() });
+                chatMsg.value = '';
+            } catch(e) {
+                console.error('Gonderme hatasi:', e);
+            }
         }
 
         chatSend.addEventListener('click', sendMessage);
