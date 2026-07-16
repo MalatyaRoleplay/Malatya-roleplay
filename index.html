@@ -1466,8 +1466,9 @@
 
         const kufurListesi = [
             'amk','amq','amck','aq','mk','amq','amm',
-            'sik','sikerim','sikir','sikim','sikeyim','siker','sikiyor','sikicek','sikti','sikis','sikisir','sikiş','siktiğim','siktigim','siktiğin','siktigim','siktir','sikik','sikin','sikle','sikme','sikmem','sikiyim','sikem','sikecegim','sikecem','siklen','sikilmis','sikildi','sikilir','sikisken','sikistir','sikişir','sikişen','sikişmek','sikilmek','sikildim',
+            'sik','sikerim','sikir','sikim','sikeyim','siker','sikiyor','sikicek','sikti','sikis','sikisir','sikiş','siktiğim','siktigim','siktiğin','siktigim','siktir','sikik','sikin','sikle','sikme','sikmem','sikiyim','sikem','sikecegim','sikecem','siklen','sikilmis','sikildi','sikilir','sikisken','sikistir','sikişir','sikişen','sikişmek','sikilmek','sikildim','sikeyimi','sikeyimii','sikiyim','sikiyimi','sikiyimii','sikiyorsun','sikiyorsun','sikiyorsunuz','sikti','siktii','siktim','siktimi','siktimii',
             'am','amcik','amcık','amck','amciq','amcq','amik','ammak','amcuk','amcq','amq','amcigar','amına','amina','amini','amını','amindan','amından','amine','amina','amcigini','amcigim','amciğim','amig','amik','amlı','amlı','amcıklar','amcıklar','amcık','amcığı','amcığa','amcığı','amcığın','amcığım',
+            'oe','oe','o.e',
             'amina_koyim','amina_koyam','amina_koyayım','amina_koy','amina sok','amina sokayim','amina sok','amina sokim','amina sikiyim','amina sikiyim','amine_koyim','amnekoyim','aminekoyim','aminakoyim','aminakoyayim','amkoyim','amkoyam','amkoyayim','amqkoyim','amkoy','amina koy','amina koyim','amina koyayim','amina sikiyim','amine koy','amine sikiyim','amine sok','amine sokayim',
             'göt','got','götü','gotu','göte','gote','götten','gotden','götü','gotu','götün','gotun','götünü','gotunu','götüne','gotune','götünden','gotunden','götünle','gotunle','götüyle','gotuy','gotunu','gotveren','götveren','gotver','gotveren','gotden','gott','götten',
             'orospu','orusbu','orospu_cocugu','orospu cocugu','orusbu_cocugu','orusbu cocugu','orsbu','orosbu','orusbu','orosp','orsp','orospu','orospunun','orospunun','orospu','orusbu',
@@ -1520,18 +1521,28 @@
         function filtrele(text) {
             let result = text;
             const lower = text.toLowerCase();
-            kufurListesi.forEach(k => {
-                const regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-                result = result.replace(regex, '*'.repeat(k.length));
-            });
             const bypass = { 'ı':'i','İ':'i','ş':'s','Ş':'s','ö':'o','Ö':'o','ü':'u','Ü':'u','ç':'c','Ç':'c','ğ':'g','Ğ':'g' };
             let norm = lower;
             Object.keys(bypass).forEach(tr => { norm = norm.split(tr).join(bypass[tr]); });
+
             kufurListesi.forEach(k => {
                 const cleanK = k.toLowerCase().replace(/\s+/g, '');
+                const regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                if (regex.test(result)) {
+                    result = result.replace(regex, m => '*'.repeat(m.length));
+                }
                 if (norm.includes(cleanK)) {
-                    const regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-                    result = result.replace(regex, '*'.repeat(k.length));
+                    const normRegex = new RegExp(cleanK.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                    let match;
+                    while ((match = normRegex.exec(norm)) !== null) {
+                        const start = match.index;
+                        const end = start + match[0].length;
+                        const origPart = result.substring(start, end);
+                        if (!/^\*+$/.test(origPart)) {
+                            result = result.substring(0, start) + '*'.repeat(end - start) + result.substring(end);
+                        }
+                        normRegex.lastIndex = end;
+                    }
                 }
             });
             return result;
