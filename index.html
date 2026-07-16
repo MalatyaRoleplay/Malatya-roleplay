@@ -1665,14 +1665,38 @@
             return result;
         }
 
+        let lastSendTime = 0;
+        const COOLDOWN = 4000;
+
         function sendMessage() {
             try {
                 const name = chatName.value.trim();
                 let text = chatMsg.value.trim();
                 if (!name || !text) return;
+
+                const now = Date.now();
+                const remaining = COOLDOWN - (now - lastSendTime);
+                if (remaining > 0) {
+                    const sec = Math.ceil(remaining / 1000);
+                    chatMsg.placeholder = sec + ' sn bekle...';
+                    chatMsg.style.borderColor = '#ff3d00';
+                    setTimeout(() => { chatMsg.placeholder = 'Mesajini yaz...'; chatMsg.style.borderColor = ''; }, remaining);
+                    return;
+                }
+
                 text = filtrele(text);
-                db.ref('messages').push({ name: name, text: text, ts: Date.now() });
+                db.ref('messages').push({ name: name, text: text, ts: now });
+                lastSendTime = now;
                 chatMsg.value = '';
+
+                chatSend.textContent = '4...';
+                chatSend.disabled = true;
+                let count = 4;
+                const timer = setInterval(() => {
+                    count--;
+                    if (count > 0) chatSend.textContent = count + '...';
+                    else { clearInterval(timer); chatSend.textContent = 'GONDER'; chatSend.disabled = false; }
+                }, 1000);
             } catch(e) {
                 console.error('Gonderme hatasi:', e);
             }
