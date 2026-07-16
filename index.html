@@ -1464,64 +1464,25 @@
         db.ref('messages').on('value', snap => renderMessages(snap.val()));
 
         const kufurListesi = [
-            'amk','amq','amck','aq','mk','sik','sicak','sg','sikerim','sikir',
-            'orospu','orusbu','oc','serefsiz','şerefsiz',
-            'pezevenk','pezo','got','göt','götveren','am','amcik','amcık',
-            'amina','amini','amina_koyim','amina koyim','koyim','koyum',
-            'piç','pic','picus','yavşak','yavak','bok','bitch','fuck','shit','ass',
-            'damn','hell','stfu','dumbass','motherfucker','asshole','retard','idiot',
-            'salak','dangalak','gerizekali','gotu',
-            'ibne','kevase','sikik','dalyarak','dalyarrak',
-            'kerhane','orosbu','amını','amına','sikiş','sikis',
-            'anani','ananı','anana','ananı','anani','anani sikerim','anani sikeyim',
-            'ananisikerim','ananisikeyim','anani sikim','ananı sikim',
+            'amk','amq','amck','aq','mk','sik','sikerim','sikir','sikim','sikeyim','siker','sikiyor',
+            'orospu','orusbu','oc','serefsiz','serefsz',
+            'pezevenk','pezo','got','göt','götveren','gotveren',
+            'am','amcik','amcık','amina','amini','amina_koyim',
+            'koyim','koyum','piç','pic','yavşak','yavak','bok',
+            'bitch','fuck','shit','ass','dumbass','motherfucker','asshole','idiot',
+            'salak','dangalak','ibne','kevase','sikik','dalyarak',
+            'kerhane','orosbu','sikiş','sikis','amını',
+            'anani','ananı','anana','yarrak','yarak','amcuk','pipi',
             'gotunu','götünü','gotune','götüne','gotunden','götünden',
-            'sikim','sikem','sikeyim','siker','sikerim','sikir','sikiyor',
-            'gotveren','götveren','amciq','amcik','amciqi',
-            'sikis','sikisir','pipi','yarrak','yarak','amcuk','gotten','gotden',
             'amina_koyim','gotune_koyim','sikime','sikine'
         ];
 
         function filtrele(text) {
-            let filtered = text.toLowerCase();
-            filtered = filtered.replace(/\s+/g, '');
-            filtered = filtered.replace(/[0-9]/g, '');
-            filtered = filtered.replace(/[.,;:!?'"(){}[\]/\\|@#$%^&*+=<>~`]/g, '');
-
             let result = text;
             kufurListesi.forEach(k => {
-                const cleanK = k.replace(/\s+/g, '').toLowerCase();
-                const regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-                const cleanRegex = new RegExp(cleanK, 'gi');
-
-                if (cleanRegex.test(filtered)) {
-                    result = result.replace(regex, '*'.repeat(k.length));
-                    if (k.includes(' ')) {
-                        const words = k.split(' ');
-                        words.forEach(w => {
-                            result = result.replace(new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '*'.repeat(w.length));
-                        });
-                    }
-                }
+                const regex = new RegExp(k, 'gi');
+                result = result.replace(regex, '*'.repeat(k.length));
             });
-
-            const bypassChars = { 'ı':'i','İ':'i','ş':'s','Ş':'s','ö':'o','Ö':'o','ü':'u','Ü':'u','ç':'c','Ç':'c','ğ':'g','Ğ':'g' };
-            let normalized = result.toLowerCase();
-            Object.keys(bypassChars).forEach(tr => { normalized = normalized.split(tr).join(bypassChars[tr]); });
-
-            kufurListesi.forEach(k => {
-                const cleanK = k.replace(/\s+/g, '').toLowerCase();
-                if (normalized.includes(cleanK)) {
-                    const regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-                    result = result.replace(regex, '*'.repeat(k.length));
-                    const words = k.split(' ');
-                    words.forEach(w => {
-                        const wRegex = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-                        result = result.replace(wRegex, '*'.repeat(w.length));
-                    });
-                }
-            });
-
             return result;
         }
 
