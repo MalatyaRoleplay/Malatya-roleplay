@@ -645,6 +645,8 @@
 
         .admin-mode .chat-msg-delete { display: block; }
 
+        .role-mode .chat-msg-delete { display: block; }
+
         .chat-login-overlay {
             display: none;
             position: fixed; top: 0; left: 0;
@@ -1223,11 +1225,6 @@
 
         rolePanel.style.display = 'none';
 
-        rolesRef.on('value', snap => {
-            allRoles = snap.val() || {};
-            renderRoles();
-        });
-
         function renderRoles() {
             const entries = Object.entries(allRoles);
             if (!entries.length) { roleList.innerHTML = '<div style="color:rgba(255,255,255,0.15);font-size:0.8rem;text-align:center;padding:10px;">Henuz rol verilmemis</div>'; return; }
@@ -1259,8 +1256,34 @@
             return '<span class="role-badge role-' + role + '">' + (roleLabels[role] || role) + '</span>';
         }
 
+        function getUserRole(name) {
+            return allRoles[name] || null;
+        }
+
+        function hasPermission(name, requiredRole) {
+            const role = getUserRole(name);
+            if (!role) return false;
+            const hierarchy = ['uye', 'yetkili', 'yonetim', 'kurucu'];
+            return hierarchy.indexOf(role) >= hierarchy.indexOf(requiredRole);
+        }
+
         function showAdminFeatures(show) {
             rolePanel.style.display = show ? 'block' : 'none';
+        }
+
+        function updateRoleFeatures() {
+            const name = chatName.value.trim();
+            if (!name) return;
+            if (hasPermission(name, 'yetkili')) {
+                document.getElementById('chatBox').classList.add('role-mode');
+            } else {
+                document.getElementById('chatBox').classList.remove('role-mode');
+            }
+            if (hasPermission(name, 'kurucu') || isAdmin) {
+                showAdminFeatures(true);
+            } else {
+                showAdminFeatures(false);
+            }
         }
 
         const c = document.getElementById('canvas');
@@ -1328,6 +1351,21 @@
         const chatSend = document.getElementById('chatSend');
         const chatCount = document.getElementById('chatCount');
 
+        const savedName = localStorage.getItem('mrp_chatname') || '';
+        chatName.value = savedName;
+        if (savedName) updateRoleFeatures();
+
+        chatName.addEventListener('input', () => {
+            localStorage.setItem('mrp_chatname', chatName.value.trim());
+            updateRoleFeatures();
+        });
+
+        rolesRef.on('value', snap => {
+            allRoles = snap.val() || {};
+            renderRoles();
+            updateRoleFeatures();
+        });
+
         const nameColors = ['#3a86ff','#00e676','#ff3d00','#ffab00','#aa00ff','#00bfa5','#ff6d00','#6200ea'];
 
         function getColor(name) {
@@ -1388,6 +1426,20 @@
         let lastMsgs = {};
         function renderMessages(msgs) {
             lastMsgs = msgs || {};
+            const currentName = chatName.value.trim();
+            const canDelete = isAdmin || hasPermission(currentName, 'yetkili');
+            const canClearAll = isAdmin || hasPermission(currentName, 'yonetim');
+
+            if (canDelete) {
+                document.getElementById('chatBox').classList.add('role-mode');
+            } else if (!isAdmin) {
+                document.getElementById('chatBox').classList.remove('role-mode');
+            }
+
+            if (canClearAll && !isAdmin) {
+                chatClearAll.style.display = 'inline-block';
+            }
+
             if (!msgs || Object.keys(msgs).length === 0) {
                 chatMessages.innerHTML = '<div class="chat-empty">Henuz mesaj yok. Ilk mesaji sen gonder!</div>';
                 chatCount.textContent = '0 mesaj';
