@@ -744,6 +744,84 @@
 
         .chat-admin-toggle:hover { color: #ff3d00; background: rgba(255,52,52,0.1); }
 
+        .login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #040810;
+            z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
+        .login-screen.hidden { display: none; }
+
+        .login-card {
+            background: rgba(10,14,30,0.95);
+            border: 1px solid rgba(58,134,255,0.15);
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 420px; width: 90%;
+            backdrop-filter: blur(30px);
+            animation: fadeUp 0.6s ease both;
+        }
+        .login-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem; font-weight: 900;
+            color: #3a86ff; letter-spacing: 5px;
+            margin-bottom: 5px;
+        }
+        .login-sub {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem; color: rgba(255,255,255,0.2);
+            letter-spacing: 4px; margin-bottom: 40px;
+        }
+        .login-icon {
+            width: 70px; height: 70px; border-radius: 50%;
+            background: rgba(58,134,255,0.08);
+            border: 1px solid rgba(58,134,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 30px;
+        }
+        .login-icon svg { width: 32px; height: 32px; color: #3a86ff; }
+        .login-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem; color: rgba(255,255,255,0.25);
+            letter-spacing: 3px; text-transform: uppercase;
+            margin-bottom: 12px; display: block;
+        }
+        .login-input {
+            width: 100%; padding: 16px 20px;
+            background: rgba(58,134,255,0.05);
+            border: 1px solid rgba(58,134,255,0.12);
+            border-radius: 12px; color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            letter-spacing: 2px; text-align: center;
+            outline: none; transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+        .login-input:focus { border-color: rgba(58,134,255,0.35); box-shadow: 0 0 20px rgba(58,134,255,0.08); }
+        .login-input::placeholder { color: rgba(255,255,255,0.15); letter-spacing: 1px; font-size: 0.8rem; }
+        .login-btn {
+            width: 100%; padding: 16px;
+            background: rgba(58,134,255,0.12);
+            border: 1px solid rgba(58,134,255,0.25);
+            border-radius: 12px; color: #3a86ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem; font-weight: 900;
+            letter-spacing: 3px; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover { background: rgba(58,134,255,0.2); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(58,134,255,0.15); }
+        .login-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .login-hint {
+            margin-top: 20px; font-size: 0.7rem;
+            color: rgba(255,255,255,0.12); letter-spacing: 1px;
+        }
+        .login-orbs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .login-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15; }
+        .login-orb-1 { width: 400px; height: 400px; background: #3a86ff; top: -100px; left: 10%; animation: orbFloat 8s ease-in-out infinite; }
+        .login-orb-2 { width: 300px; height: 300px; background: #00b4d8; bottom: -80px; right: 10%; animation: orbFloat 8s ease-in-out infinite 3s; }
+
         .role-badge {
             display: inline-block;
             padding: 1px 7px;
@@ -874,6 +952,24 @@
     </style>
 </head>
 <body>
+    <div class="login-screen" id="loginScreen">
+        <div class="login-orbs">
+            <div class="login-orb login-orb-1"></div>
+            <div class="login-orb login-orb-2"></div>
+        </div>
+        <div class="login-card">
+            <div class="login-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4-4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="login-logo">MALATYA RP</div>
+            <div class="login-sub">Roleplay Dunyasi</div>
+            <span class="login-label">Kullanici Adin</span>
+            <input type="text" class="login-input" id="loginNameInput" placeholder="Adini yaz..." maxlength="20" autofocus>
+            <button class="login-btn" id="loginBtn">SITEYE GIR</button>
+            <div class="login-hint">Isminiz sohbette ve profilinizde gorunecek</div>
+        </div>
+    </div>
+
     <div class="bg"></div>
     <div class="grid"></div>
     <canvas id="canvas"></canvas>
@@ -1194,6 +1290,27 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script>
+        const loginScreen = document.getElementById('loginScreen');
+        const loginNameInput = document.getElementById('loginNameInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const savedUser = localStorage.getItem('mrp_chatname');
+
+        if (savedUser) {
+            loginScreen.classList.add('hidden');
+        } else {
+            loginBtn.addEventListener('click', enterSite);
+            loginNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') enterSite(); });
+
+            function enterSite() {
+                const name = loginNameInput.value.trim();
+                if (!name) { loginNameInput.style.borderColor = '#ff3d00'; return; }
+                localStorage.setItem('mrp_chatname', name);
+                loginScreen.classList.add('hidden');
+                document.getElementById('chatName').value = name;
+                try { updateRoleFeatures(); } catch(e) {}
+            }
+        }
+
         firebase.initializeApp({
             apiKey: "AIzaSyBbmMoZyICIBLGEC6X379LTmrnFbmrLIaA",
             authDomain: "malatya-rp-chat.firebaseapp.com",
