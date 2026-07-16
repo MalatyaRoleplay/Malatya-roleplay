@@ -1394,6 +1394,8 @@
         const chatClearAll = document.getElementById('chatClearAll');
         const chatAdminLogout = document.getElementById('chatAdminLogout');
 
+        let lastMsgs = {};
+
         if (isAdmin) {
             chatAdminBar.classList.add('active');
             document.getElementById('chatBox').classList.add('admin-mode');
@@ -1423,7 +1425,6 @@
 
         function deleteMsg(key) { if (confirm('Bu mesaji silmek istedigine emin misin?')) { db.ref('messages/' + key).remove(); } }
 
-        let lastMsgs = {};
         function renderMessages(msgs) {
             lastMsgs = msgs || {};
             const currentName = chatName.value.trim();
