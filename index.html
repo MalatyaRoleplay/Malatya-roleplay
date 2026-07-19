@@ -754,7 +754,7 @@
         else if (t.status === 'answered') { statusEl.textContent = 'Yanıtlandı'; statusEl.className = 'pill pill-answered'; }
         else { statusEl.textContent = 'Kapalı'; statusEl.className = 'pill pill-closed'; }
 
-        document.getElementById('closeTicketBtn').style.display = (t.status === 'closed') ? 'none' : (isStaffUser(getMyName()) ? '' : 'none');
+        document.getElementById('closeTicketBtn').style.display = (t.status === 'closed') ? 'none' : '';
 
         renderChatMessages();
         renderTicketList();
