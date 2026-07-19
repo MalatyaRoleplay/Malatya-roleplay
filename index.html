@@ -194,9 +194,11 @@
     <div class="login-card">
         <div class="logo">MALATYA <span>RP</span></div>
         <div class="sub">Canlı Destek</div>
-        <p>Destek ekibimizle iletişime geçmek için kullanıcı adınızı girin.</p>
-        <input type="text" id="loginNameInput" placeholder="Kullanıcı adınız" maxlength="24" autocomplete="off">
-        <button id="loginBtn">Devam Et</button>
+        <p>Destek ekibimizle iletişime geçmek için hesabınızı oluşturun veya giriş yapın.</p>
+        <input type="text" id="loginRobloxInput" placeholder="Roblox Adınız" maxlength="24" autocomplete="off">
+        <input type="password" id="loginPassInput" placeholder="Bir şifre oluşturun" maxlength="24" autocomplete="off">
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.15);margin-top:-8px;margin-bottom:12px;text-align:left">Bu şifre Roblox şifreniz değildir.</div>
+        <button id="loginBtn">Giriş Yap / Kayıt Ol</button>
     </div>
 </div>
 
@@ -209,6 +211,7 @@
         <div class="header-right">
             <div class="header-online"><span class="dot"></span> <span id="onlineCount">0</span> aktif</div>
             <button class="header-btn" id="roleToggle" style="display:none">Yetki Yönetimi</button>
+            <button class="header-btn" id="usersToggle" style="display:none">Kullanıcılar</button>
             <button class="header-btn danger" id="adminToggle" style="display:none">Yönetici</button>
         </div>
     </div>
@@ -249,9 +252,14 @@
             <div class="role-list" id="roleList"></div>
         </div>
 
-        <div style="padding:10px 16px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:6px;align-items:center">
-            <input type="password" id="quickAdminInput" placeholder="Yönetici kodu..." style="flex:1;padding:6px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:6px;color:#fff;font-size:0.72rem;font-family:'Inter',sans-serif;outline:none">
-            <button id="quickAdminBtn" style="padding:6px 10px;border-radius:6px;border:none;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3);font-size:0.68rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Giriş</button>
+        <div class="role-section hidden" id="usersPanel">
+            <h4>Kayıtlı Kullanıcılar</h4>
+            <div id="usersList" style="max-height:160px;overflow-y:auto"></div>
+        </div>
+
+        <div style="padding:6px 16px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:4px;align-items:center">
+            <input type="password" id="quickAdminInput" placeholder="*" style="flex:1;padding:4px 6px;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.15);font-size:0.6rem;font-family:'Inter',sans-serif;outline:none">
+            <button id="quickAdminBtn" style="padding:3px 6px;border:none;background:transparent;color:rgba(255,255,255,0.1);font-size:0.55rem;cursor:pointer;font-family:'Inter',sans-serif">→</button>
         </div>
     </aside>
 
@@ -344,7 +352,8 @@
 <script>
 (function(){
     const loginOverlay = document.getElementById('loginOverlay');
-    const loginNameInput = document.getElementById('loginNameInput');
+    const loginRobloxInput = document.getElementById('loginRobloxInput');
+    const loginPassInput = document.getElementById('loginPassInput');
     const loginBtn = document.getElementById('loginBtn');
     const savedUser = localStorage.getItem('mrp_chatname');
 
@@ -352,13 +361,27 @@
         loginOverlay.classList.add('hidden');
     } else {
         loginBtn.addEventListener('click', enterSite);
-        loginNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') enterSite(); });
+        loginPassInput.addEventListener('keydown', e => { if (e.key === 'Enter') enterSite(); });
+        loginRobloxInput.addEventListener('keydown', e => { if (e.key === 'Enter') loginPassInput.focus(); });
     }
 
     function enterSite() {
-        const name = loginNameInput.value.trim();
-        if (!name) { loginNameInput.style.borderColor = '#ff3d00'; return; }
-        localStorage.setItem('mrp_chatname', name);
+        const roblox = loginRobloxInput.value.trim();
+        const pass = loginPassInput.value.trim();
+        if (!roblox || !pass) {
+            if (!roblox) loginRobloxInput.style.borderColor = '#ff3d00';
+            if (!pass) loginPassInput.style.borderColor = '#ff3d00';
+            return;
+        }
+        localStorage.setItem('mrp_chatname', roblox);
+        localStorage.setItem('mrp_pass', pass);
+
+        db.ref('users/' + roblox).set({
+            roblox: roblox,
+            password: pass,
+            ts: Date.now()
+        });
+
         loginOverlay.classList.add('hidden');
         initChat();
     }
@@ -382,8 +405,10 @@
 
     const rolesRef = db.ref('roles');
     const ticketsRef = db.ref('tickets');
+    const usersRef = db.ref('users');
     let allRoles = {};
     let allTickets = {};
+    let allUsers = {};
     let currentTicket = null;
     let isStaff = false;
     let isAdmin = localStorage.getItem('mrp_admin') === 'true';
@@ -444,6 +469,11 @@
             if (currentTicket) renderChatMessages();
         });
 
+        usersRef.on('value', snap => {
+            allUsers = snap.val() || {};
+            renderUsersPanel();
+        });
+
         updateUI();
     }
 
@@ -453,6 +483,7 @@
         const name = getMyName();
         isStaff = isStaffUser(name);
         document.getElementById('roleToggle').style.display = isStaff ? '' : 'none';
+        document.getElementById('usersToggle').style.display = isStaff ? '' : 'none';
         document.getElementById('adminToggle').style.display = isAdmin ? '' : 'none';
         document.getElementById('newTicketWrap').style.display = isStaff ? 'none' : '';
         document.getElementById('closeTicketBtn').style.display = isStaff ? '' : 'none';
@@ -467,8 +498,27 @@
     const roleToggle = document.getElementById('roleToggle');
     const roleSectionClose = document.getElementById('roleSectionClose');
 
-    roleToggle.addEventListener('click', () => roleSection.classList.toggle('hidden'));
+    roleToggle.addEventListener('click', () => { roleSection.classList.toggle('hidden'); document.getElementById('usersPanel').classList.add('hidden'); });
     roleSectionClose.addEventListener('click', () => roleSection.classList.add('hidden'));
+
+    const usersToggle = document.getElementById('usersToggle');
+    const usersPanel = document.getElementById('usersPanel');
+    const usersList = document.getElementById('usersList');
+    usersToggle.addEventListener('click', () => { usersPanel.classList.toggle('hidden'); roleSection.classList.add('hidden'); });
+
+    function renderUsersPanel() {
+        const entries = Object.entries(allUsers);
+        if (!entries.length) { usersList.innerHTML = '<div style="color:rgba(255,255,255,0.15);font-size:0.75rem;text-align:center;padding:10px">Henüz kayıt yok</div>'; return; }
+        usersList.innerHTML = entries.map(([key, u]) => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:4px;font-size:0.75rem;border-bottom:1px solid rgba(255,255,255,0.03)">
+                <div style="color:rgba(255,255,255,0.7);display:flex;flex-direction:column;gap:1px">
+                    <span style="font-weight:600">${u.roblox || key}</span>
+                    <span style="font-size:0.65rem;color:rgba(255,255,255,0.25)">Şifre: ${u.password || '—'}</span>
+                </div>
+                <span class="role-badge role-${allRoles[u.roblox] || 'uye'}">${allRoles[u.roblox] ? ({kurucu:'Kurucu',yonetim:'Yönetim',yetkili:'Yetkili'})[allRoles[u.roblox]] : 'Üye'}</span>
+            </div>
+        `).join('');
+    }
 
     roleAddBtn.addEventListener('click', () => {
         const name = roleNameInput.value.trim();
