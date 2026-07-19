@@ -810,15 +810,14 @@
     // CLOSE TICKET
     document.getElementById('closeTicketBtn').addEventListener('click', () => {
         if (!currentTicket) return;
-        if (!confirm('Bu bileti kapatmak istediğine emin misin?')) return;
-        ticketsRef.child(currentTicket).update({ status: 'closed' });
-        const name = getMyName();
-        ticketsRef.child(currentTicket + '/messages').push({
-            name: 'Sistem',
-            text: name + ' bileti kapattı',
-            ts: Date.now(),
-            system: true
-        });
+        if (!confirm('Bu bileti silmek istediğine emin misin?')) return;
+        ticketsRef.child(currentTicket).remove();
+        currentTicket = null;
+        document.getElementById('chatActive').classList.add('hidden');
+        document.getElementById('chatActive').style.display = 'none';
+        document.getElementById('chatEmpty').classList.remove('hidden');
+        document.getElementById('chatEmpty').style.display = '';
+        updateMobileBtns();
     });
 
     // SEND MESSAGE
