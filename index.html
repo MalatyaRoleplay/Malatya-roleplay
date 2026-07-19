@@ -9,226 +9,237 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:#0b0d10;color:#e4e6eb;min-height:100vh;overflow-x:hidden}
-        ::-webkit-scrollbar{width:6px}
+        body{font-family:'Inter',sans-serif;background:#0b0d10;color:#e4e6eb;min-height:100vh;overflow:hidden}
+        ::-webkit-scrollbar{width:5px}
         ::-webkit-scrollbar-track{background:transparent}
         ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
         ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.15)}
-
-        .glass{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06)}
+        .hidden{display:none!important}
 
         /* LOGIN */
         #loginOverlay{position:fixed;inset:0;background:#0b0d10;z-index:9999;display:flex;align-items:center;justify-content:center}
-        #loginOverlay.hidden{display:none}
-        .login-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:48px 40px;text-align:center;max-width:400px;width:90%;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-        .login-card h2{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-0.02em}
-        .login-card p{color:rgba(255,255,255,0.4);font-size:0.85rem;margin-bottom:28px;line-height:1.5}
+        .login-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:48px 40px;text-align:center;max-width:400px;width:90%;backdrop-filter:blur(24px)}
+        .login-card .logo{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:#fff;letter-spacing:-0.02em;margin-bottom:4px}
+        .login-card .logo span{color:#3a86ff}
+        .login-card .sub{font-size:0.75rem;color:rgba(255,255,255,0.25);margin-bottom:28px;letter-spacing:0.04em;text-transform:uppercase}
+        .login-card p{color:rgba(255,255,255,0.35);font-size:0.85rem;margin-bottom:20px;line-height:1.5}
         .login-card input{width:100%;padding:12px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;margin-bottom:14px;transition:border-color .2s}
         .login-card input:focus{border-color:rgba(58,134,255,0.4)}
         .login-card input::placeholder{color:rgba(255,255,255,0.2)}
         .login-card button{width:100%;padding:12px;background:#3a86ff;border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all .2s}
         .login-card button:hover{background:#2b6fe0;transform:translateY(-1px)}
-        .login-card .login-sub{font-size:0.75rem;color:rgba(255,255,255,0.2);margin-top:14px}
 
         /* HEADER */
-        .site-header{position:sticky;top:0;z-index:100;background:rgba(11,13,16,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.05)}
-        .header-inner{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
-        .header-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-        .header-brand-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3a86ff,#5865f2);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.85rem;color:#fff}
-        .header-brand-text{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
-        .header-brand-sub{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-left:2px}
-        .header-nav{display:flex;align-items:center;gap:8px}
-        .header-nav a,.header-nav button{padding:8px 16px;border-radius:8px;text-decoration:none;font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.5);background:transparent;border:none;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
-        .header-nav a:hover,.header-nav button:hover{color:#fff;background:rgba(255,255,255,0.06)}
-        .header-nav .nav-active{color:#3a86ff;background:rgba(58,134,255,0.08)}
-        .header-online{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:rgba(255,255,255,0.4);padding:6px 12px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05)}
-        .header-online-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+        .site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,13,16,0.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.05);height:56px}
+        .header-inner{max-width:100%;padding:0 24px;height:100%;display:flex;align-items:center;justify-content:space-between}
+        .header-brand{display:flex;align-items:center;gap:12px}
+        .header-brand-icon{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#3a86ff,#5865f2);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.7rem;color:#fff}
+        .header-brand-text{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#fff}
+        .header-brand-text span{color:rgba(255,255,255,0.3);font-weight:400;font-size:0.8rem;margin-left:6px}
+        .header-right{display:flex;align-items:center;gap:12px}
+        .header-online{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:rgba(255,255,255,0.4);padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05)}
+        .dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        .header-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+        .header-btn:hover{background:rgba(255,255,255,0.08);color:#fff}
+        .header-btn.danger{color:#ff3d00;border-color:rgba(255,52,0,0.15)}
+        .header-btn.danger:hover{background:rgba(255,52,0,0.08)}
 
-        /* MAIN LAYOUT */
-        .workspace{display:flex;height:calc(100vh - 61px);max-width:1400px;margin:0 auto}
+        /* WORKSPACE */
+        .workspace{display:flex;height:calc(100vh - 56px);margin-top:56px}
 
         /* SIDEBAR */
-        .sidebar{width:320px;min-width:320px;border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;background:rgba(255,255,255,0.01)}
-        .sidebar-header{padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
-        .sidebar-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-        .sidebar-title span{font-size:0.7rem;font-weight:500;color:rgba(255,255,255,0.3);font-family:'Inter',sans-serif}
+        .sidebar{width:340px;min-width:340px;border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;background:rgba(255,255,255,0.01)}
+        .sidebar-top{padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+        .sidebar-top h3{font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+        .sidebar-top h3 span{font-size:0.7rem;font-weight:500;color:rgba(255,255,255,0.3);font-family:'Inter',sans-serif}
         .sidebar-search{position:relative}
-        .sidebar-search input{width:100%;padding:10px 14px 10px 36px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;color:#fff;font-size:0.82rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+        .sidebar-search input{width:100%;padding:9px 12px 9px 34px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;color:#fff;font-size:0.82rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
         .sidebar-search input:focus{border-color:rgba(58,134,255,0.3)}
         .sidebar-search input::placeholder{color:rgba(255,255,255,0.2)}
-        .sidebar-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:rgba(255,255,255,0.2)}
+        .sidebar-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:rgba(255,255,255,0.2)}
 
-        /* NEW TICKET */
-        .sidebar-new{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.04)}
-        .sidebar-new h4{font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em}
-        .sidebar-new p{font-size:0.75rem;color:rgba(255,255,255,0.25);line-height:1.4}
+        /* NEW TICKET BTN */
+        .new-ticket-wrap{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+        .new-ticket-btn{width:100%;padding:10px;border-radius:8px;border:1px dashed rgba(58,134,255,0.2);background:rgba(58,134,255,0.04);color:#3a86ff;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+        .new-ticket-btn:hover{background:rgba(58,134,255,0.08);border-color:rgba(58,134,255,0.3)}
 
-        /* USER LIST */
-        .sidebar-list{flex:1;overflow-y:auto;padding:8px 10px}
-        .sidebar-list-title{font-size:0.7rem;font-weight:600;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.06em;padding:10px 10px 6px}
-        .user-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s}
-        .user-item:hover{background:rgba(255,255,255,0.04)}
-        .user-avatar{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0}
-        .user-info{flex:1;min-width:0}
-        .user-name{font-size:0.85rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
-        .user-name span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .user-status{font-size:0.72rem;color:rgba(255,255,255,0.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .user-time{font-size:0.65rem;color:rgba(255,255,255,0.2);flex-shrink:0}
-
-        /* ROLE BADGES */
-        .role-badge{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;flex-shrink:0}
-        .role-kurucu{background:rgba(255,215,0,0.12);color:#ffd700;border:1px solid rgba(255,215,0,0.15)}
-        .role-yonetim{background:rgba(58,134,255,0.12);color:#3a86ff;border:1px solid rgba(58,134,255,0.15)}
-        .role-yetkili{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.15)}
-        .role-uye{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.06)}
-
-        /* CHAT PANEL */
-        .chat-panel{flex:1;display:flex;flex-direction:column;min-width:0}
-        .chat-head{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between}
-        .chat-head-left h3{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#fff}
-        .chat-head-left p{font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:2px}
-        .chat-head-right{display:flex;align-items:center;gap:8px}
-        .chat-head-right .pill{padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:600}
-        .pill-online{background:rgba(34,197,94,0.1);color:#22c55e;border:1px solid rgba(34,197,94,0.15)}
-        .pill-count{background:rgba(58,134,255,0.1);color:#3a86ff;border:1px solid rgba(58,134,255,0.15)}
-
-        /* ADMIN BAR */
-        .admin-bar{display:none;padding:10px 24px;background:rgba(255,52,0,0.05);border-bottom:1px solid rgba(255,52,0,0.1);align-items:center;gap:8px;flex-wrap:wrap}
-        .admin-bar.active{display:flex}
-        .admin-bar .pill-admin{background:rgba(255,52,0,0.1);color:#ff3d00;border:1px solid rgba(255,52,0,0.15);padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:600}
-        .admin-btn{padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);font-size:0.72rem;font-weight:500;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
-        .admin-btn:hover{background:rgba(255,255,255,0.08);color:#fff}
-        .admin-btn.danger{color:#ff3d00;border-color:rgba(255,52,0,0.15)}
-        .admin-btn.danger:hover{background:rgba(255,52,0,0.1)}
-
-        /* MESSAGES */
-        .chat-feed{flex:1;overflow-y:auto;padding:20px 24px}
-        .chat-empty{text-align:center;padding:60px 20px;color:rgba(255,255,255,0.2);font-size:0.85rem}
-        .chat-empty p{margin-top:6px;font-size:0.75rem;color:rgba(255,255,255,0.12)}
-        .msg{display:flex;gap:10px;padding:8px 0;position:relative;group:msg}
-        .msg:hover .msg-delete{opacity:1}
-        .msg-avatar{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0}
-        .msg-content{flex:1;min-width:0}
-        .msg-header{display:flex;align-items:center;gap:8px;margin-bottom:2px}
-        .msg-name{font-size:0.82rem;font-weight:600}
-        .msg-time{font-size:0.65rem;color:rgba(255,255,255,0.2)}
-        .msg-text{font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:1.45;word-wrap:break-word}
-        .msg-delete{position:absolute;right:0;top:8px;opacity:0;padding:4px 8px;border-radius:4px;border:none;background:rgba(255,52,0,0.1);color:#ff3d00;font-size:0.65rem;font-weight:600;cursor:pointer;transition:opacity .15s;font-family:'Inter',sans-serif}
-        .msg-delete:hover{background:rgba(255,52,0,0.2)}
-
-        /* COMPOSE */
-        .chat-compose{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.04)}
-        .compose-shell{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:4px 4px 4px 16px;transition:border-color .2s}
-        .compose-shell:focus-within{border-color:rgba(58,134,255,0.3)}
-        .compose-shell input{flex:1;background:transparent;border:none;color:#fff;font-size:0.88rem;font-family:'Inter',sans-serif;outline:none;padding:8px 0}
-        .compose-shell input::placeholder{color:rgba(255,255,255,0.2)}
-        .compose-send{width:38px;height:38px;border-radius:8px;border:none;background:#3a86ff;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0}
-        .compose-send:hover{background:#2b6fe0}
-        .compose-send:disabled{opacity:.4;cursor:not-allowed}
-        .compose-send svg{width:18px;height:18px}
-        .compose-cooldown{font-size:0.7rem;color:rgba(255,255,255,0.25);margin-top:6px;text-align:center}
-
-        /* ROLE PANEL */
-        .role-panel{display:none;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.04)}
-        .role-panel.active{display:block}
-        .role-panel h4{font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em}
-        .role-form{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-        .role-form input,.role-form select{padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;color:#fff;font-size:0.8rem;font-family:'Inter',sans-serif;outline:none}
-        .role-form select{font-size:0.75rem}
-        .role-form select option{background:#0b0d10;color:#fff}
-        .role-form button{padding:8px 16px;border-radius:6px;border:none;background:#3a86ff;color:#fff;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-        .role-form button:hover{background:#2b6fe0}
-        .role-list{max-height:150px;overflow-y:auto}
-        .role-list-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;margin-bottom:2px}
-        .role-list-item:hover{background:rgba(255,255,255,0.03)}
-        .role-list-name{font-size:0.8rem;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:6px}
-        .role-list-remove{padding:3px 8px;border-radius:4px;border:none;background:rgba(255,52,0,0.1);color:#ff3d00;font-size:0.65rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-
-        /* ADMIN LOGIN OVERLAY */
-        .admin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-        .admin-overlay.active{display:flex}
-        .admin-card{background:#12151e;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px 24px;text-align:center;max-width:340px;width:90%}
-        .admin-card h3{font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:4px}
-        .admin-card p{font-size:0.75rem;color:rgba(255,255,255,0.3);margin-bottom:16px}
-        .admin-card input{width:100%;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#fff;font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;margin-bottom:10px}
-        .admin-card .admin-error{color:#ff3d00;font-size:0.75rem;margin-bottom:10px;display:none}
-        .admin-card-btns{display:flex;gap:8px}
-        .admin-card-btns button{flex:1;padding:10px;border-radius:8px;border:none;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-        .admin-ok{background:#3a86ff;color:#fff}
-        .admin-cancel{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)}
-
-        /* FOOTER */
-        .site-footer{border-top:1px solid rgba(255,255,255,0.04);padding:16px 28px;text-align:center;font-size:0.72rem;color:rgba(255,255,255,0.2)}
-
-        /* MOBILE */
-        .mobile-toggle{display:none;position:fixed;bottom:20px;right:20px;z-index:200;width:48px;height:48px;border-radius:14px;background:#3a86ff;border:none;color:#fff;cursor:pointer;box-shadow:0 4px 20px rgba(58,134,255,0.3)}
-        @media(max-width:768px){
-            .sidebar{position:fixed;left:-100%;top:61px;width:100%;min-width:unset;height:calc(100vh - 61px);z-index:150;transition:left .3s}
-            .sidebar.open{left:0}
-            .mobile-toggle{display:flex;align-items:center;justify-content:center}
-            .header-nav{display:none}
-        }
-
-        /* TICKET ITEM */
-        .ticket-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
-        .ticket-item:hover{background:rgba(255,255,255,0.04)}
-        .ticket-item.active{background:rgba(58,134,255,0.06);border-color:rgba(58,134,255,0.1)}
+        /* TICKET LIST */
+        .ticket-list{flex:1;overflow-y:auto;padding:6px 10px}
+        .ticket-list-label{font-size:0.65rem;font-weight:600;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.06em;padding:10px 8px 4px}
+        .ticket-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .15s;border:1px solid transparent;margin-bottom:2px}
+        .ticket-item:hover{background:rgba(255,255,255,0.03)}
+        .ticket-item.active{background:rgba(58,134,255,0.06);border-color:rgba(58,134,255,0.12)}
         .ticket-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
         .ticket-dot.open{background:#22c55e}
+        .ticket-dot.answered{background:#3a86ff}
         .ticket-dot.closed{background:rgba(255,255,255,0.15)}
         .ticket-info{flex:1;min-width:0}
         .ticket-title{font-size:0.82rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .ticket-preview{font-size:0.72rem;color:rgba(255,255,255,0.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .ticket-badge{width:18px;height:18px;border-radius:50%;background:#3a86ff;color:#fff;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .ticket-preview{font-size:0.7rem;color:rgba(255,255,255,0.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+        .ticket-meta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+        .ticket-time{font-size:0.6rem;color:rgba(255,255,255,0.2)}
+        .ticket-badge{width:16px;height:16px;border-radius:50%;background:#3a86ff;color:#fff;font-size:0.55rem;font-weight:700;display:none;align-items:center;justify-content:center}
+        .ticket-badge.show{display:flex}
+
+        /* ROLE PANEL */
+        .role-section{border-top:1px solid rgba(255,255,255,0.04);padding:12px 16px}
+        .role-section h4{font-size:0.7rem;font-weight:600;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+        .role-section h4 button{background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:0.7rem;font-family:'Inter',sans-serif}
+        .role-section h4 button:hover{color:#fff}
+        .role-form{display:flex;gap:6px;margin-bottom:8px}
+        .role-form input,.role-form select{padding:7px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;color:#fff;font-size:0.78rem;font-family:'Inter',sans-serif;outline:none}
+        .role-form select{font-size:0.72rem}
+        .role-form select option{background:#0b0d10}
+        .role-form button{padding:7px 12px;border-radius:6px;border:none;background:#3a86ff;color:#fff;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+        .role-list{max-height:120px;overflow-y:auto}
+        .role-list-item{display:flex;align-items:center;justify-content:space-between;padding:5px 6px;border-radius:4px;font-size:0.75rem;color:rgba(255,255,255,0.6)}
+        .role-list-item:hover{background:rgba(255,255,255,0.03)}
+        .role-list-name{display:flex;align-items:center;gap:5px}
+        .role-list-remove{padding:2px 6px;border-radius:3px;border:none;background:rgba(255,52,0,0.08);color:#ff3d00;font-size:0.6rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+
+        .role-badge{display:inline-flex;padding:2px 6px;border-radius:4px;font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;flex-shrink:0}
+        .role-kurucu{background:rgba(255,215,0,0.1);color:#ffd700;border:1px solid rgba(255,215,0,0.12)}
+        .role-yonetim{background:rgba(58,134,255,0.1);color:#3a86ff;border:1px solid rgba(58,134,255,0.12)}
+        .role-yetkili{background:rgba(34,197,94,0.1);color:#22c55e;border:1px solid rgba(34,197,94,0.12)}
+        .role-uye{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.05)}
+
+        /* CHAT PANEL */
+        .chat-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:rgba(0,0,0,0.15)}
+
+        /* EMPTY STATE */
+        .chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.15)}
+        .chat-empty svg{width:48px;height:48px;margin-bottom:12px;opacity:0.3}
+        .chat-empty p{font-size:0.85rem}
+
+        /* CHAT HEADER */
+        .chat-head{padding:14px 24px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between}
+        .chat-head-left{display:flex;align-items:center;gap:10px}
+        .chat-head-avatar{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem}
+        .chat-head-info h3{font-size:0.9rem;font-weight:700;color:#fff}
+        .chat-head-info p{font-size:0.7rem;color:rgba(255,255,255,0.3)}
+        .chat-head-right{display:flex;gap:6px}
+        .chat-head-right .pill{padding:4px 10px;border-radius:12px;font-size:0.68rem;font-weight:600}
+        .pill-open{background:rgba(34,197,94,0.1);color:#22c55e;border:1px solid rgba(34,197,94,0.12)}
+        .pill-answered{background:rgba(58,134,255,0.1);color:#3a86ff;border:1px solid rgba(58,134,255,0.12)}
+        .pill-closed{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.06)}
+
+        /* MESSAGES */
+        .chat-feed{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:4px}
+        .msg{display:flex;gap:10px;padding:8px 0;position:relative}
+        .msg:hover .msg-delete{opacity:1}
+        .msg-avatar{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.75rem;flex-shrink:0}
+        .msg-content{flex:1;min-width:0}
+        .msg-header{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+        .msg-name{font-size:0.8rem;font-weight:600}
+        .msg-time{font-size:0.62rem;color:rgba(255,255,255,0.2)}
+        .msg-text{font-size:0.84rem;color:rgba(255,255,255,0.65);line-height:1.45;word-wrap:break-word}
+        .msg-delete{position:absolute;right:0;top:8px;opacity:0;padding:3px 7px;border-radius:4px;border:none;background:rgba(255,52,0,0.08);color:#ff3d00;font-size:0.62rem;font-weight:600;cursor:pointer;transition:opacity .15s;font-family:'Inter',sans-serif}
+        .msg-delete:hover{background:rgba(255,52,0,0.15)}
+        .msg-system{text-align:center;padding:12px 0;font-size:0.72rem;color:rgba(255,255,255,0.2)}
+        .msg-system span{background:rgba(255,255,255,0.04);padding:4px 12px;border-radius:12px}
+
+        /* COMPOSE */
+        .chat-compose{padding:14px 24px;border-top:1px solid rgba(255,255,255,0.04)}
+        .compose-shell{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:4px 4px 4px 16px;transition:border-color .2s}
+        .compose-shell:focus-within{border-color:rgba(58,134,255,0.3)}
+        .compose-shell input{flex:1;background:transparent;border:none;color:#fff;font-size:0.86rem;font-family:'Inter',sans-serif;outline:none;padding:8px 0}
+        .compose-shell input::placeholder{color:rgba(255,255,255,0.2)}
+        .compose-send{width:36px;height:36px;border-radius:8px;border:none;background:#3a86ff;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0}
+        .compose-send:hover{background:#2b6fe0}
+        .compose-send:disabled{opacity:.3;cursor:not-allowed}
+        .compose-send svg{width:16px;height:16px}
+        .compose-info{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+        .compose-cooldown{font-size:0.68rem;color:rgba(255,255,255,0.2)}
+        .compose-close-btn{padding:5px 12px;border-radius:6px;border:1px solid rgba(255,52,0,0.15);background:rgba(255,52,0,0.05);color:#ff3d00;font-size:0.7rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:none}
+        .compose-close-btn:hover{background:rgba(255,52,0,0.1)}
+
+        /* NEW TICKET MODAL */
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .modal-overlay.active{display:flex}
+        .modal{background:#12151e;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px 24px;max-width:420px;width:90%}
+        .modal h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px}
+        .modal p{font-size:0.78rem;color:rgba(255,255,255,0.3);margin-bottom:18px}
+        .modal label{display:block;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);margin-bottom:6px}
+        .modal input,.modal select,.modal textarea{width:100%;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#fff;font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;margin-bottom:14px;transition:border-color .2s}
+        .modal textarea{resize:vertical;min-height:80px}
+        .modal input:focus,.modal textarea:focus{border-color:rgba(58,134,255,0.3)}
+        .modal input::placeholder,.modal textarea::placeholder{color:rgba(255,255,255,0.2)}
+        .modal select option{background:#12151e;color:#fff}
+        .modal-btns{display:flex;gap:8px;margin-top:4px}
+        .modal-btns button{flex:1;padding:10px;border-radius:8px;border:none;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+        .modal-ok{background:#3a86ff;color:#fff}
+        .modal-ok:hover{background:#2b6fe0}
+        .modal-cancel{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)}
+
+        /* ADMIN LOGIN */
+        .admin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:600;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .admin-overlay.active{display:flex}
+
+        /* MOBILE */
+        .mobile-back{display:none;position:fixed;bottom:20px;left:20px;z-index:200;width:44px;height:44px;border-radius:12px;background:#3a86ff;border:none;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(58,134,255,0.3)}
+        .mobile-menu{display:none;position:fixed;bottom:20px;right:20px;z-index:200;width:44px;height:44px;border-radius:12px;background:#3a86ff;border:none;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(58,134,255,0.3)}
+        @media(max-width:768px){
+            .sidebar{position:fixed;left:-100%;top:56px;width:100%;min-width:unset;height:calc(100vh - 56px);z-index:150;transition:left .25s;background:#0b0d10}
+            .sidebar.open{left:0}
+            .chat-panel{position:fixed;left:0;top:56px;width:100%;height:calc(100vh - 56px)}
+            .mobile-back{display:flex;align-items:center;justify-content:center}
+            .mobile-menu{display:flex;align-items:center;justify-content:center}
+        }
     </style>
 </head>
 <body>
 
 <div id="loginOverlay">
     <div class="login-card">
-        <h2>MALATYA RP</h2>
-        <p>Canlı destek sohbetine katılmak için kullanıcı adınızı girin.</p>
+        <div class="logo">MALATYA <span>RP</span></div>
+        <div class="sub">Canlı Destek</div>
+        <p>Destek ekibimizle iletişime geçmek için kullanıcı adınızı girin.</p>
         <input type="text" id="loginNameInput" placeholder="Kullanıcı adınız" maxlength="24" autocomplete="off">
         <button id="loginBtn">Devam Et</button>
-        <div class="login-sub">Adınız sohbette ve profilinizde görünecek</div>
     </div>
 </div>
 
 <header class="site-header">
     <div class="header-inner">
-        <a class="header-brand" href="#">
+        <div class="header-brand">
             <div class="header-brand-icon">MRP</div>
-            <div>
-                <div class="header-brand-text">Malatya RP <span class="header-brand-sub">// Canlı Destek</span></div>
-            </div>
-        </a>
-        <div class="header-nav">
-            <div class="header-online">
-                <span class="header-online-dot"></span>
-                <span id="activeUsersCount">0</span> aktif
-            </div>
-            <button onclick="document.getElementById('rolePanel').classList.toggle('active')" id="rolePanelToggle" style="display:none">Yetki Yönetimi</button>
+            <div class="header-brand-text">Malatya RP <span>Canlı Destek</span></div>
+        </div>
+        <div class="header-right">
+            <div class="header-online"><span class="dot"></span> <span id="onlineCount">0</span> aktif</div>
+            <button class="header-btn" id="roleToggle" style="display:none">Yetki Yönetimi</button>
+            <button class="header-btn danger" id="adminToggle" style="display:none">Yönetici</button>
         </div>
     </div>
 </header>
 
 <div class="workspace">
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-title">Görüşmeler <span id="ticketCount">0 bilet</span></div>
+        <div class="sidebar-top">
+            <h3>Görüşmeler <span id="ticketCount">0 bilet</span></h3>
             <div class="sidebar-search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="search" id="sidebarSearch" placeholder="Kullanıcı ara..." autocomplete="off">
+                <input type="search" id="sidebarSearch" placeholder="Bilet veya kullanıcı ara..." autocomplete="off">
             </div>
         </div>
 
-        <div class="role-panel" id="rolePanel">
-            <h4>Yetki Yönetimi</h4>
+        <div class="new-ticket-wrap" id="newTicketWrap">
+            <button class="new-ticket-btn" id="newTicketBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                Yeni Bilet Aç
+            </button>
+        </div>
+
+        <div class="ticket-list" id="ticketList">
+            <div class="ticket-list-label">Biletler</div>
+        </div>
+
+        <div class="role-section hidden" id="roleSection">
+            <h4>Yetki Yönetimi <button id="roleSectionClose">Kapat</button></h4>
             <div class="role-form">
-                <input type="text" id="roleNameInput" placeholder="Kullanıcı adı" style="flex:1;min-width:100px">
+                <input type="text" id="roleNameInput" placeholder="Kullanıcı adı" style="flex:1;min-width:80px">
                 <select id="roleSelect">
-                    <option value="uye">Üye</option>
                     <option value="yetkili">Yetkili</option>
                     <option value="yonetim">Yönetim</option>
                     <option value="kurucu">Kurucu</option>
@@ -237,76 +248,93 @@
             </div>
             <div class="role-list" id="roleList"></div>
         </div>
-
-        <div class="sidebar-new">
-            <h4>Aktif Sohbet</h4>
-            <p>Tüm kullanıcılar aynı sohbette buluşuyor. Mesaj göndermek için aşağıya yazın.</p>
-        </div>
-
-        <div class="sidebar-list" id="userList">
-            <div class="sidebar-list-title">SOHBETE BAĞLI KİŞİLER</div>
-        </div>
     </aside>
 
-    <section class="chat-panel">
-        <div class="chat-head">
-            <div class="chat-head-left">
-                <h3>Genel Sohbet</h3>
-                <p id="chatCount">0 mesaj</p>
-            </div>
-            <div class="chat-head-right">
-                <span class="pill pill-count" id="pillCount">0 mesaj</span>
-                <span class="pill pill-online"><span class="header-online-dot" style="width:6px;height:6px;display:inline-block;vertical-align:middle;margin-right:4px"></span> Aktif</span>
-            </div>
+    <section class="chat-panel" id="chatPanel">
+        <div class="chat-empty" id="chatEmpty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <p>Bir bilet seçin veya yeni bilet açın</p>
         </div>
 
-        <div class="admin-bar" id="adminBar">
-            <span class="pill-admin">YÖNETİCİ</span>
-            <button class="admin-btn" id="chatClearAll">Hepsini Sil</button>
-            <button class="admin-btn danger" id="adminLogout">Çıkış</button>
-        </div>
-
-        <div class="chat-feed" id="chatFeed">
-            <div class="chat-empty">
-                Henüz mesaj yok.
-                <p>İlk mesajı sen gönder!</p>
+        <div id="chatActive" class="hidden" style="display:none;flex-direction:column;height:100%">
+            <div class="chat-head">
+                <div class="chat-head-left">
+                    <div class="chat-head-avatar" id="chatAvatar" style="background:#3a86ff22;color:#3a86ff;border:1px solid #3a86ff22">?</div>
+                    <div class="chat-head-info">
+                        <h3 id="chatTitle">Bilet</h3>
+                        <p id="chatMeta">—</p>
+                    </div>
+                </div>
+                <div class="chat-head-right">
+                    <span class="pill" id="chatStatus">Açık</span>
+                </div>
             </div>
-        </div>
 
-        <div class="chat-compose">
-            <div class="compose-shell">
-                <input type="text" id="chatMsg" placeholder="Mesajınızı yazın..." maxlength="500" autocomplete="off">
-                <button class="compose-send" id="chatSend" title="Gönder">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
-                </button>
+            <div class="chat-feed" id="chatFeed"></div>
+
+            <div class="chat-compose">
+                <div class="compose-shell">
+                    <input type="text" id="chatMsg" placeholder="Mesajınızı yazın..." maxlength="500" autocomplete="off">
+                    <button class="compose-send" id="chatSend" title="Gönder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+                    </button>
+                </div>
+                <div class="compose-info">
+                    <span class="compose-cooldown" id="cooldownText"></span>
+                    <button class="compose-close-btn" id="closeTicketBtn">Bileti Kapat</button>
+                </div>
             </div>
-            <div class="compose-cooldown" id="cooldownText"></div>
         </div>
     </section>
 </div>
 
-<div class="admin-overlay" id="adminOverlay">
-    <div class="admin-card">
-        <h3>Yönetici Girişi</h3>
-        <p>Yönetici şifresini girin</p>
-        <input type="password" id="adminPassInput" placeholder="Şifre">
-        <div class="admin-error" id="adminError">Yanlış şifre!</div>
-        <div class="admin-card-btns">
-            <button class="admin-cancel" id="adminCancel">İptal</button>
-            <button class="admin-ok" id="adminOk">Giriş</button>
+<div class="modal-overlay" id="newTicketModal">
+    <div class="modal">
+        <h3>Yeni Bilet Oluştur</h3>
+        <p>Destek ekibimiz en kısa sürede size yardımcı olacaktır.</p>
+        <label>Konu</label>
+        <input type="text" id="ticketSubject" placeholder="Sorununuzu kısaca açıklayın" maxlength="60">
+        <label>Kategori</label>
+        <select id="ticketCategory">
+            <option value="genel">Genel</option>
+            <option value="sikayet">Şikayet</option>
+            <option value="oneri">Öneri</option>
+            <option value="bug">Hata Bildirimi</option>
+            <option value="diger">Diğer</option>
+        </select>
+        <label>Mesajınız</label>
+        <textarea id="ticketMessage" placeholder="Sorununuzu detaylı açıklayın..." maxlength="1000"></textarea>
+        <div class="modal-btns">
+            <button class="modal-cancel" id="modalCancel">İptal</button>
+            <button class="modal-ok" id="modalOk">Bilet Oluştur</button>
         </div>
     </div>
 </div>
 
-<button class="mobile-toggle" id="mobileToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-</button>
+<div class="admin-overlay" id="adminOverlay">
+    <div class="modal">
+        <h3>Yönetici Girişi</h3>
+        <p>Yönetici şifresini girin</p>
+        <input type="password" id="adminPassInput" placeholder="Şifre">
+        <div style="color:#ff3d00;font-size:0.75rem;margin-bottom:10px;display:none" id="adminError">Yanlış şifre!</div>
+        <div class="modal-btns">
+            <button class="modal-cancel" id="adminCancelBtn">İptal</button>
+            <button class="modal-ok" id="adminOkBtn">Giriş</button>
+        </div>
+    </div>
+</div>
 
-<div class="site-footer">Made by Rylo</div>
+<button class="mobile-back hidden" id="mobileBack">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+</button>
+<button class="mobile-menu hidden" id="mobileMenu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
+(function(){
     const loginOverlay = document.getElementById('loginOverlay');
     const loginNameInput = document.getElementById('loginNameInput');
     const loginBtn = document.getElementById('loginBtn');
@@ -317,14 +345,14 @@
     } else {
         loginBtn.addEventListener('click', enterSite);
         loginNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') enterSite(); });
+    }
 
-        function enterSite() {
-            const name = loginNameInput.value.trim();
-            if (!name) { loginNameInput.style.borderColor = '#ff3d00'; return; }
-            localStorage.setItem('mrp_chatname', name);
-            loginOverlay.classList.add('hidden');
-            try { updateRoleFeatures(); } catch(e) {}
-        }
+    function enterSite() {
+        const name = loginNameInput.value.trim();
+        if (!name) { loginNameInput.style.borderColor = '#ff3d00'; return; }
+        localStorage.setItem('mrp_chatname', name);
+        loginOverlay.classList.add('hidden');
+        initChat();
     }
 
     firebase.initializeApp({
@@ -343,32 +371,96 @@
     const onlineRef = db.ref('online');
     myRef.set(true);
     myRef.onDisconnect().remove();
-    onlineRef.on('value', snap => {
-        const count = snap.numChildren();
-        document.getElementById('activeUsersCount').textContent = count;
-    });
 
     const rolesRef = db.ref('roles');
+    const ticketsRef = db.ref('tickets');
     let allRoles = {};
-    const rolePanel = document.getElementById('rolePanel');
+    let allTickets = {};
+    let currentTicket = null;
+    let isStaff = false;
+    let isAdmin = localStorage.getItem('mrp_admin') === 'true';
+    const ADMIN_PASS = 'rylo2025';
+    const COOLDOWN = 4000;
+    let lastSendTime = 0;
+
+    function getMyName() { return localStorage.getItem('mrp_chatname') || ''; }
+
+    function hasPermission(name, requiredRole) {
+        const role = allRoles[name];
+        if (!role) return false;
+        const h = ['yetkili','yonetim','kurucu'];
+        return h.indexOf(role) >= h.indexOf(requiredRole);
+    }
+
+    function isStaffUser(name) {
+        return isAdmin || hasPermission(name, 'yetkili');
+    }
+
+    function getColor(name) {
+        const c = ['#3a86ff','#00e676','#ff3d00','#ffab00','#aa00ff','#00bfa5','#ff6d00','#6200ea','#e91e63','#00bcd4'];
+        let h = 0;
+        for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+        return c[Math.abs(h) % c.length];
+    }
+
+    function timeAgo(ts) {
+        const d = Date.now() - ts;
+        if (d < 60000) return 'Şimdi';
+        if (d < 3600000) return Math.floor(d/60000) + ' dk';
+        if (d < 86400000) return Math.floor(d/3600000) + ' sa';
+        return Math.floor(d/86400000) + ' gün';
+    }
+
+    function getRoleBadge(name) {
+        const role = allRoles[name];
+        if (!role || role === 'uye') return '';
+        const labels = { kurucu: 'Kurucu', yonetim: 'Yönetim', yetkili: 'Yetkili' };
+        return '<span class="role-badge role-' + role + '">' + (labels[role] || role) + '</span>';
+    }
+
+    function initChat() {
+        onlineRef.on('value', snap => {
+            document.getElementById('onlineCount').textContent = snap.numChildren();
+        });
+
+        rolesRef.on('value', snap => {
+            allRoles = snap.val() || {};
+            renderRolePanel();
+            updateUI();
+            renderTicketList();
+        });
+
+        ticketsRef.on('value', snap => {
+            allTickets = snap.val() || {};
+            renderTicketList();
+            if (currentTicket) renderChatMessages();
+        });
+
+        updateUI();
+    }
+
+    if (savedUser) initChat();
+
+    function updateUI() {
+        const name = getMyName();
+        isStaff = isStaffUser(name);
+        document.getElementById('roleToggle').style.display = isStaff ? '' : 'none';
+        document.getElementById('adminToggle').style.display = isAdmin ? '' : 'none';
+        document.getElementById('newTicketWrap').style.display = isStaff ? 'none' : '';
+        document.getElementById('closeTicketBtn').style.display = isStaff ? '' : 'none';
+    }
+
+    // ROLE PANEL
+    const roleSection = document.getElementById('roleSection');
     const roleNameInput = document.getElementById('roleNameInput');
     const roleSelect = document.getElementById('roleSelect');
     const roleAddBtn = document.getElementById('roleAddBtn');
     const roleList = document.getElementById('roleList');
+    const roleToggle = document.getElementById('roleToggle');
+    const roleSectionClose = document.getElementById('roleSectionClose');
 
-    function renderRoles() {
-        const entries = Object.entries(allRoles);
-        if (!entries.length) { roleList.innerHTML = '<div style="color:rgba(255,255,255,0.15);font-size:0.75rem;text-align:center;padding:10px">Henüz rol verilmemiş</div>'; return; }
-        const roleLabels = { kurucu: 'Kurucu', yonetim: 'Yönetim', yetkili: 'Yetkili', uye: 'Üye' };
-        roleList.innerHTML = entries.map(([name, role]) => `
-            <div class="role-list-item">
-                <div class="role-list-name">${name} <span class="role-badge role-${role}">${roleLabels[role] || role}</span></div>
-                <button class="role-list-remove" onclick="removeRole('${name}')">Kaldır</button>
-            </div>
-        `).join('');
-    }
-
-    window.removeRole = function(name) { if (confirm(name + ' kullanıcısının rolü kaldırılsın mı?')) { rolesRef.child(name).remove(); } };
+    roleToggle.addEventListener('click', () => roleSection.classList.toggle('hidden'));
+    roleSectionClose.addEventListener('click', () => roleSection.classList.add('hidden'));
 
     roleAddBtn.addEventListener('click', () => {
         const name = roleNameInput.value.trim();
@@ -379,39 +471,55 @@
     });
     roleNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') roleAddBtn.click(); });
 
-    function getRoleBadge(name) {
-        const role = allRoles[name];
-        if (!role) return '';
-        const roleLabels = { kurucu: 'Kurucu', yonetim: 'Yönetim', yetkili: 'Yetkili', uye: 'Üye' };
-        return '<span class="role-badge role-' + role + '">' + (roleLabels[role] || role) + '</span>';
+    function renderRolePanel() {
+        const entries = Object.entries(allRoles);
+        if (!entries.length) { roleList.innerHTML = '<div style="color:rgba(255,255,255,0.15);font-size:0.75rem;text-align:center;padding:10px">Henüz yetkili eklenmemiş</div>'; return; }
+        const labels = { kurucu: 'Kurucu', yonetim: 'Yönetim', yetkili: 'Yetkili' };
+        roleList.innerHTML = entries.map(([n, r]) => `
+            <div class="role-list-item">
+                <div class="role-list-name">${n} <span class="role-badge role-${r}">${labels[r]||r}</span></div>
+                <button class="role-list-remove" onclick="window._removeRole('${n}')">Kaldır</button>
+            </div>
+        `).join('');
     }
 
-    function getUserRole(name) { return allRoles[name] || null; }
+    window._removeRole = function(name) {
+        if (confirm(name + ' yetkisi kaldırılsın mı?')) rolesRef.child(name).remove();
+    };
 
-    function hasPermission(name, requiredRole) {
-        const role = getUserRole(name);
-        if (!role) return false;
-        const hierarchy = ['uye', 'yetkili', 'yonetim', 'kurucu'];
-        return hierarchy.indexOf(role) >= hierarchy.indexOf(requiredRole);
-    }
-
-    let isAdmin = localStorage.getItem('mrp_admin') === 'true';
-    const ADMIN_PASS = 'rylo2025';
-    const adminBar = document.getElementById('adminBar');
+    // ADMIN
     const adminOverlay = document.getElementById('adminOverlay');
     const adminPassInput = document.getElementById('adminPassInput');
-    const adminOk = document.getElementById('adminOk');
-    const adminCancel = document.getElementById('adminCancel');
+    const adminOkBtn = document.getElementById('adminOkBtn');
+    const adminCancelBtn = document.getElementById('adminCancelBtn');
     const adminError = document.getElementById('adminError');
-    const chatClearAll = document.getElementById('chatClearAll');
-    const adminLogout = document.getElementById('adminLogout');
-    const rolePanelToggle = document.getElementById('rolePanelToggle');
+    const adminToggle = document.getElementById('adminToggle');
 
-    if (isAdmin) {
-        adminBar.classList.add('active');
-        rolePanel.classList.add('active');
-        rolePanelToggle.style.display = '';
-    }
+    adminToggle.addEventListener('click', () => {
+        if (isAdmin) {
+            isAdmin = false;
+            localStorage.removeItem('mrp_admin');
+            updateUI();
+            return;
+        }
+        adminOverlay.classList.add('active');
+        adminPassInput.value = '';
+        adminError.style.display = 'none';
+        adminPassInput.focus();
+    });
+
+    adminOkBtn.addEventListener('click', () => {
+        if (adminPassInput.value === ADMIN_PASS) {
+            isAdmin = true;
+            localStorage.setItem('mrp_admin', 'true');
+            adminOverlay.classList.remove('active');
+            updateUI();
+        } else {
+            adminError.style.display = 'block';
+        }
+    });
+    adminPassInput.addEventListener('keydown', e => { if (e.key === 'Enter') adminOkBtn.click(); });
+    adminCancelBtn.addEventListener('click', () => adminOverlay.classList.remove('active'));
 
     document.addEventListener('keydown', e => {
         if (e.ctrlKey && e.shiftKey && e.key === 'A') {
@@ -419,10 +527,7 @@
             if (isAdmin) {
                 isAdmin = false;
                 localStorage.removeItem('mrp_admin');
-                adminBar.classList.remove('active');
-                rolePanel.classList.remove('active');
-                rolePanelToggle.style.display = 'none';
-                renderMessages(lastMsgs);
+                updateUI();
             } else {
                 adminOverlay.classList.add('active');
                 adminPassInput.value = '';
@@ -432,92 +537,155 @@
         }
     });
 
-    adminOk.addEventListener('click', () => {
-        if (adminPassInput.value === ADMIN_PASS) {
-            isAdmin = true;
-            localStorage.setItem('mrp_admin', 'true');
-            adminOverlay.classList.remove('active');
-            adminBar.classList.add('active');
-            rolePanel.classList.add('active');
-            rolePanelToggle.style.display = '';
-            renderMessages(lastMsgs);
-        } else { adminError.style.display = 'block'; }
-    });
-    adminPassInput.addEventListener('keydown', e => { if (e.key === 'Enter') adminOk.click(); });
-    adminCancel.addEventListener('click', () => adminOverlay.classList.remove('active'));
-    adminLogout.addEventListener('click', () => {
-        isAdmin = false;
-        localStorage.removeItem('mrp_admin');
-        adminBar.classList.remove('active');
-        rolePanel.classList.remove('active');
-        rolePanelToggle.style.display = 'none';
-        renderMessages(lastMsgs);
-    });
-    chatClearAll.addEventListener('click', () => { if (confirm('TÜM MESAJLARI SİLMEK İSTEDİĞİNE EMİN MİSİN?')) { db.ref('messages').remove(); } });
+    // TICKETS
+    const newTicketBtn = document.getElementById('newTicketBtn');
+    const newTicketModal = document.getElementById('newTicketModal');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalOk = document.getElementById('modalOk');
+    const ticketSubject = document.getElementById('ticketSubject');
+    const ticketCategory = document.getElementById('ticketCategory');
+    const ticketMessage = document.getElementById('ticketMessage');
+    const ticketList = document.getElementById('ticketList');
+    const ticketCount = document.getElementById('ticketCount');
 
-    function updateRoleFeatures() {
-        const name = localStorage.getItem('mrp_chatname');
-        if (!name) return;
-        if (isAdmin || hasPermission(name, 'kurucu')) {
-            rolePanel.classList.add('active');
-            rolePanelToggle.style.display = '';
-        } else {
-            rolePanelToggle.style.display = 'none';
+    newTicketBtn.addEventListener('click', () => {
+        newTicketModal.classList.add('active');
+        ticketSubject.value = '';
+        ticketMessage.value = '';
+        ticketCategory.selectedIndex = 0;
+        ticketSubject.focus();
+    });
+    modalCancel.addEventListener('click', () => newTicketModal.classList.remove('active'));
+
+    modalOk.addEventListener('click', () => {
+        const subj = ticketSubject.value.trim();
+        const msg = ticketMessage.value.trim();
+        const cat = ticketCategory.value;
+        const name = getMyName();
+        if (!subj || !msg || !name) return;
+
+        const ticketId = 'ticket_' + Date.now();
+        ticketsRef.child(ticketId).set({
+            subject: subj,
+            category: cat,
+            creator: name,
+            status: 'open',
+            ts: Date.now(),
+            messages: {}
+        });
+
+        db.ref('tickets/' + ticketId + '/messages').push({
+            name: name,
+            text: msg,
+            ts: Date.now(),
+            system: false
+        });
+
+        ticketsRef.child(ticketId).child('messages').push({
+            name: 'Sistem',
+            text: name + ' bilet açtı — ' + subj,
+            ts: Date.now(),
+            system: true
+        });
+
+        newTicketModal.classList.remove('active');
+        selectTicket(ticketId);
+    });
+
+    function renderTicketList() {
+        const entries = Object.entries(allTickets).sort((a,b) => (b[1].ts||0) - (a[1].ts||0));
+        const name = getMyName();
+        const staff = isStaffUser(name);
+
+        let filtered = entries;
+        if (!staff) {
+            filtered = entries.filter(([,t]) => t.creator === name);
         }
-    }
 
-    const chatMessages = document.getElementById('chatFeed');
-    const chatMsg = document.getElementById('chatMsg');
-    const chatSend = document.getElementById('chatSend');
-    const chatCount = document.getElementById('chatCount');
-    const pillCount = document.getElementById('pillCount');
-    const cooldownText = document.getElementById('cooldownText');
+        ticketCount.textContent = filtered.length + ' bilet';
 
-    rolesRef.on('value', snap => {
-        allRoles = snap.val() || {};
-        renderRoles();
-        try { updateRoleFeatures(); } catch(e) {}
-    });
+        const catIcons = { genel:'💬', sikayet:'⚠️', oneri:'💡', bug:'🐛', diger:'📋' };
 
-    const nameColors = ['#3a86ff','#00e676','#ff3d00','#ffab00','#aa00ff','#00bfa5','#ff6d00','#6200ea','#e91e63','#00bcd4'];
-    function getColor(name) {
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        return nameColors[Math.abs(hash) % nameColors.length];
-    }
-
-    function timeAgo(ts) {
-        const diff = Date.now() - ts;
-        if (diff < 60000) return 'Şimdi';
-        if (diff < 3600000) return Math.floor(diff/60000) + ' dk önce';
-        if (diff < 86400000) return Math.floor(diff/3600000) + ' sa önce';
-        return Math.floor(diff/86400000) + ' gün önce';
-    }
-
-    let lastMsgs = {};
-
-    function deleteMsg(key) { if (confirm('Bu mesajı silmek istediğine emin misin?')) { db.ref('messages/' + key).remove(); } }
-
-    function renderMessages(msgs) {
-        lastMsgs = msgs || {};
-        const currentName = localStorage.getItem('mrp_chatname') || '';
-        const canDelete = isAdmin || hasPermission(currentName, 'yetkili');
-        const canClearAll = isAdmin || hasPermission(currentName, 'yonetim');
-
-        if (canClearAll) chatClearAll.style.display = '';
-
-        if (!msgs || Object.keys(msgs).length === 0) {
-            chatMessages.innerHTML = '<div class="chat-empty">Henüz mesaj yok.<p>İlk mesajı sen gönder!</p></div>';
-            chatCount.textContent = '0 mesaj';
-            pillCount.textContent = '0 mesaj';
+        if (!filtered.length) {
+            ticketList.innerHTML = '<div class="ticket-list-label">Biletler</div><div style="padding:30px;text-align:center;color:rgba(255,255,255,0.15);font-size:0.8rem">Henüz bilet yok</div>';
             return;
         }
-        const entries = Object.entries(msgs).sort((a,b) => a[1].ts - b[1].ts);
-        chatCount.textContent = entries.length + ' mesaj';
-        pillCount.textContent = entries.length + ' mesaj';
-        chatMessages.innerHTML = entries.map(([key, m]) => {
+
+        let html = '<div class="ticket-list-label">Biletler</div>';
+        filtered.forEach(([id, t]) => {
+            const isActive = currentTicket === id;
+            const statusClass = t.status === 'open' ? 'open' : t.status === 'answered' ? 'answered' : 'closed';
+            const lastMsg = t.messages ? Object.values(t.messages).sort((a,b) => b.ts - a.ts)[0] : null;
+            const preview = lastMsg ? (lastMsg.system ? lastMsg.text : lastMsg.name + ': ' + lastMsg.text) : 'Bilet oluşturuldu';
+            html += `<div class="ticket-item ${isActive ? 'active' : ''}" onclick="window._selectTicket('${id}')">
+                <div class="ticket-dot ${statusClass}"></div>
+                <div class="ticket-info">
+                    <div class="ticket-title">${catIcons[t.category]||'💬'} ${t.subject}</div>
+                    <div class="ticket-preview">${preview}</div>
+                </div>
+                <div class="ticket-meta">
+                    <span class="ticket-time">${timeAgo(t.ts)}</span>
+                </div>
+            </div>`;
+        });
+        ticketList.innerHTML = html;
+    }
+
+    window._selectTicket = selectTicket;
+
+    function selectTicket(id) {
+        currentTicket = id;
+        const t = allTickets[id];
+        if (!t) return;
+
+        const chatEmpty = document.getElementById('chatEmpty');
+        const chatActive = document.getElementById('chatActive');
+        chatEmpty.classList.add('hidden');
+        chatEmpty.style.display = 'none';
+        chatActive.classList.remove('hidden');
+        chatActive.style.display = 'flex';
+
+        const col = getColor(t.creator);
+        document.getElementById('chatAvatar').textContent = t.creator.charAt(0).toUpperCase();
+        document.getElementById('chatAvatar').style.background = col + '15';
+        document.getElementById('chatAvatar').style.color = col;
+        document.getElementById('chatAvatar').style.borderColor = col + '22';
+        document.getElementById('chatTitle').textContent = t.subject;
+        document.getElementById('chatMeta').textContent = 'by ' + t.creator + ' • ' + t.category;
+
+        const statusEl = document.getElementById('chatStatus');
+        if (t.status === 'open') { statusEl.textContent = 'Açık'; statusEl.className = 'pill pill-open'; }
+        else if (t.status === 'answered') { statusEl.textContent = 'Yanıtlandı'; statusEl.className = 'pill pill-answered'; }
+        else { statusEl.textContent = 'Kapalı'; statusEl.className = 'pill pill-closed'; }
+
+        document.getElementById('closeTicketBtn').style.display = (t.status === 'closed') ? 'none' : (isStaffUser(getMyName()) ? '' : 'none');
+
+        renderChatMessages();
+        renderTicketList();
+
+        document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function renderChatMessages() {
+        const t = allTickets[currentTicket];
+        if (!t || !t.messages) {
+            document.getElementById('chatFeed').innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.15);font-size:0.8rem">Mesaj yok</div>';
+            return;
+        }
+
+        const name = getMyName();
+        const staff = isStaffUser(name);
+        const msgs = Object.entries(t.messages).sort((a,b) => a[1].ts - b[1].ts);
+
+        let html = '';
+        msgs.forEach(([k, m]) => {
+            if (m.system) {
+                html += '<div class="msg-system"><span>' + m.text + '</span></div>';
+                return;
+            }
             const col = getColor(m.name);
-            return `<div class="msg">
+            const canDel = staff || m.name === name;
+            html += `<div class="msg">
                 <div class="msg-avatar" style="color:${col};background:${col}15;border:1px solid ${col}22">${m.name.charAt(0).toUpperCase()}</div>
                 <div class="msg-content">
                     <div class="msg-header">
@@ -527,38 +695,99 @@
                     </div>
                     <div class="msg-text">${m.text}</div>
                 </div>
-                ${canDelete ? '<button class="msg-delete" onclick="deleteMsg(\'' + key + '\')">Sil</button>' : ''}
-            </div>`;
-        }).join('');
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    db.ref('messages').on('value', snap => renderMessages(snap.val()));
-
-    onlineRef.on('value', snap => {
-        const val = snap.val() || {};
-        const names = Object.keys(val).filter(k => val[k] && val[k].name);
-        const list = document.getElementById('userList');
-        if (names.length === 0) {
-            list.innerHTML = '<div class="sidebar-list-title">SOHBETE BAĞLI KİŞİLER</div><div style="padding:20px;text-align:center;color:rgba(255,255,255,0.15);font-size:0.8rem">Kimse bağlı değil</div>';
-            return;
-        }
-        let html = '<div class="sidebar-list-title">SOHBETE BAĞLI KİŞİLER</div>';
-        names.forEach(n => {
-            const col = getColor(n);
-            const role = allRoles[n];
-            const roleBadge = getRoleBadge(n);
-            html += `<div class="user-item">
-                <div class="user-avatar" style="color:${col};background:${col}15;border:1px solid ${col}22">${n.charAt(0).toUpperCase()}</div>
-                <div class="user-info">
-                    <div class="user-name"><span>${n}</span>${roleBadge}</div>
-                    <div class="user-status">${role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Bağlı'}</div>
-                </div>
+                ${canDel ? '<button class="msg-delete" onclick="window._deleteMsg(\'' + currentTicket + '\',\'' + k + '\')">Sil</button>' : ''}
             </div>`;
         });
-        list.innerHTML = html;
+
+        document.getElementById('chatFeed').innerHTML = html;
+        const feed = document.getElementById('chatFeed');
+        feed.scrollTop = feed.scrollHeight;
+    }
+
+    window._deleteMsg = function(ticketId, msgKey) {
+        if (confirm('Bu mesajı silmek istediğine emin misin?')) {
+            ticketsRef.child(ticketId + '/messages/' + msgKey).remove();
+        }
+    };
+
+    // CLOSE TICKET
+    document.getElementById('closeTicketBtn').addEventListener('click', () => {
+        if (!currentTicket) return;
+        if (!confirm('Bu bileti kapatmak istediğine emin misin?')) return;
+        ticketsRef.child(currentTicket).update({ status: 'closed' });
+        const name = getMyName();
+        ticketsRef.child(currentTicket + '/messages').push({
+            name: 'Sistem',
+            text: name + ' bileti kapattı',
+            ts: Date.now(),
+            system: true
+        });
     });
 
+    // SEND MESSAGE
+    const chatMsg = document.getElementById('chatMsg');
+    const chatSend = document.getElementById('chatSend');
+    const cooldownText = document.getElementById('cooldownText');
+
+    function sendMessage() {
+        if (!currentTicket) return;
+        const name = getMyName();
+        let text = chatMsg.value.trim();
+        if (!name || !text) return;
+
+        const t = allTickets[currentTicket];
+        if (t && t.status === 'closed') { alert('Bu bilet kapatılmış.'); return; }
+
+        const now = Date.now();
+        const remaining = COOLDOWN - (now - lastSendTime);
+        if (remaining > 0) {
+            const sec = Math.ceil(remaining / 1000);
+            chatMsg.placeholder = sec + ' sn bekle...';
+            cooldownText.textContent = sec + ' saniye bekleyin...';
+            setTimeout(() => { chatMsg.placeholder = 'Mesajınızı yazın...'; cooldownText.textContent = ''; }, remaining);
+            return;
+        }
+
+        text = filtrele(text);
+        ticketsRef.child(currentTicket + '/messages').push({
+            name: name, text: text, ts: now, system: false
+        });
+
+        ticketsRef.child(currentTicket).update({ status: 'answered' });
+
+        lastSendTime = now;
+        chatMsg.value = '';
+
+        chatSend.disabled = true;
+        let count = 4;
+        cooldownText.textContent = count + ' saniye bekleyin...';
+        const timer = setInterval(() => {
+            count--;
+            if (count > 0) cooldownText.textContent = count + ' saniye bekleyin...';
+            else { clearInterval(timer); chatSend.disabled = false; cooldownText.textContent = ''; }
+        }, 1000);
+    }
+
+    chatSend.addEventListener('click', sendMessage);
+    chatMsg.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+    // SEARCH
+    document.getElementById('sidebarSearch').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('.ticket-item').forEach(el => {
+            el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+
+    // MOBILE
+    document.getElementById('mobileBack').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.add('open');
+    });
+    document.getElementById('mobileMenu').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.add('open');
+    });
+
+    // PROFANITY
     const kufurListesi = ['amk','amq','amck','aq','mk','amm','sik','sikerim','sikir','sikim','sikeyim','siker','sikiyor','sikicek','sikti','sikis','sikisir','sikiş','siktiğim','siktigim','siktiğin','siktir','sikik','sikin','sikle','sikme','sikmem','sikiyim','sikem','sikecegim','sikecem','siklen','sikilmis','sikildi','sikilir','sikisken','sikistir','sikişir','sikişen','sikişmek','sikilmek','sikildim','sikeyimi','sikiyim','sikiyorsun','sikiyorsunuz','siktii','siktim','siktimi','am','amcik','amcık','amck','amciq','amcq','amik','ammak','amcuk','amcigar','amına','amina','amini','amını','amindan','amından','amine','amcigini','amcigim','amciğim','amig','amlı','amcıklar','amcığı','amcığa','amcığın','amcığım','oe','o.e','amina_koyim','amina_koyam','amina_koyayım','amina_koy','amina sok','amina sokayim','amina sokim','amina sikiyim','amine_koyim','amnekoyim','aminekoyim','aminakoyim','aminakoyayim','amkoyim','amkoyam','amkoyayim','amqkoyim','amkoy','amina koy','amina koyim','amina koyayim','amina sikiyim','amine koy','amine sikiyim','amine sok','amine sokayim','göt','got','götü','gotu','göte','gote','götten','gotden','götün','gotun','götünü','gotunu','götüne','gotune','götünden','gotunden','götünle','gotunle','götüyle','gotveren','götveren','gotver','gotden','gott','götten','orospu','orusbu','orospu_cocugu','orospu cocugu','orusbu_cocugu','orusbu cocugu','orsbu','orosbu','orosp','orsp','orospunun','piç','pic','picus','piçlik','piclik','piçin','picin','piçe','pice','piçler','picler','piçur','picur','pezevenk','pezo','peze','pezeven','pezeveni','ibne','ibn','ibney','ibneler','ibneleri','ibnenin','kevase','kevas','sikik','sikikler','sikiğim','sikigim','dalyarak','dalyarrak','kerhane','kerhanede','kerhanenin','yarrak','yarak','yarragi','yarağı','yarragin','yarağın','yarragina','yarağına','yaraklar','yarraklar','pipi','pipiler','sikiş','sikis','sikişme','sikisme','sikişen','sikisen','sikişmek','sikismek','sikişken','sikisken','sikişir','sikisir','sikişi','sikisi','sikişip','sikisip','gotunu','götünü','gotune','götüne','gotunden','götünden','amina_koyim','gotune_koyim','sikime','sikine','amina_koyayim','gotune_koyayim','koyim','koyam','koyayim','koyarim','koyar','koyan','koydum','koydu','koya','koyuyor','salak','salaklar','dangalak','dangalaklar','bok','bokun','boku','boka','boklar','bokluk','boklu','boklari','anani','ananı','anana','ananisikeyim','anani sikim','anani sikeyim','ananisikerim','anani_sikerim','anani_sik','anani sik','anani siker','ananı sik','ananı siker','anami','anamin','kafan','kafani','kafana','kafanı','bitch','fuck','shit','ass','dumbass','motherfucker','asshole','idiot','retard','stfu','damn','retarded','evlat','evlad','evladim','mal','mallar','malin','malın','maldar','malca','gerizekali','gerizekalin','gerizekalının','oç','oc','o.ç','şerefsiz','serefsiz','serefsz','serfsiz','haysiyetsiz','namussuz','namert','kaltak','kaltaklar','kaltagı','kaltagin','pejo','yavşak','yavşaklar','yavsan','yavşan','yavak','yavaklar','godoş','godos','sürtük','surruk','surrtuk','sürtükl','dalle','dallas','dalip','sacmalama','aptal','aptallar','aptalca','embesil','embesiller','babanı','babani','baban','babanin','babanın','cocuk','çocuk','cocugun','çocuğun','cocugu','çocuğu','amg','amqq','amqqq','amqk'];
 
     function filtrele(text) {
@@ -567,76 +796,24 @@
         const bypass = { 'ı':'i','İ':'i','ş':'s','Ş':'s','ö':'o','Ö':'o','ü':'u','Ü':'u','ç':'c','Ç':'c','ğ':'g','Ğ':'g' };
         let norm = lower;
         Object.keys(bypass).forEach(tr => { norm = norm.split(tr).join(bypass[tr]); });
-
         kufurListesi.forEach(k => {
             const cleanK = k.toLowerCase().replace(/\s+/g, '');
             const regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-            if (regex.test(result)) {
-                result = result.replace(regex, m => '*'.repeat(m.length));
-            }
+            if (regex.test(result)) result = result.replace(regex, m => '*'.repeat(m.length));
             if (norm.includes(cleanK)) {
                 const normRegex = new RegExp(cleanK.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
                 let match;
                 while ((match = normRegex.exec(norm)) !== null) {
-                    const start = match.index;
-                    const end = start + match[0].length;
-                    const origPart = result.substring(start, end);
-                    if (!/^\*+$/.test(origPart)) {
-                        result = result.substring(0, start) + '*'.repeat(end - start) + result.substring(end);
-                    }
-                    normRegex.lastIndex = end;
+                    const s = match.index, e = s + match[0].length;
+                    const orig = result.substring(s, e);
+                    if (!/^\*+$/.test(orig)) result = result.substring(0, s) + '*'.repeat(e - s) + result.substring(e);
+                    normRegex.lastIndex = e;
                 }
             }
         });
         return result;
     }
-
-    let lastSendTime = 0;
-    const COOLDOWN = 4000;
-
-    function sendMessage() {
-        try {
-            const name = localStorage.getItem('mrp_chatname');
-            let text = chatMsg.value.trim();
-            if (!name || !text) return;
-
-            const now = Date.now();
-            const remaining = COOLDOWN - (now - lastSendTime);
-            if (remaining > 0) {
-                const sec = Math.ceil(remaining / 1000);
-                chatMsg.placeholder = sec + ' sn bekle...';
-                cooldownText.textContent = sec + ' saniye bekleyin...';
-                setTimeout(() => { chatMsg.placeholder = 'Mesajınızı yazın...'; cooldownText.textContent = ''; }, remaining);
-                return;
-            }
-
-            text = filtrele(text);
-            db.ref('messages').push({ name: name, text: text, ts: now });
-            lastSendTime = now;
-            chatMsg.value = '';
-
-            chatSend.disabled = true;
-            let count = 4;
-            cooldownText.textContent = count + ' saniye bekleyin...';
-            const timer = setInterval(() => {
-                count--;
-                if (count > 0) cooldownText.textContent = count + ' saniye bekleyin...';
-                else { clearInterval(timer); chatSend.disabled = false; cooldownText.textContent = ''; }
-            }, 1000);
-        } catch(e) {
-            console.error('Gonderme hatasi:', e);
-        }
-    }
-
-    chatSend.addEventListener('click', sendMessage);
-    chatMsg.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-
-    document.getElementById('sidebarSearch').addEventListener('input', function() {
-        const q = this.value.toLowerCase();
-        document.querySelectorAll('.user-item').forEach(el => {
-            el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
-        });
-    });
+})();
 </script>
 </body>
 </html>
