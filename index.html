@@ -518,6 +518,7 @@
     }
 
     function getColor(name) {
+        if (!name) return '#3a86ff';
         const c = ['#3a86ff','#00e676','#ff3d00','#ffab00','#aa00ff','#00bfa5','#ff6d00','#6200ea','#e91e63','#00bcd4'];
         let h = 0;
         for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
@@ -828,13 +829,13 @@
         chatActive.classList.remove('hidden');
         chatActive.style.display = 'flex';
 
-        const col = getColor(t.creator);
-        document.getElementById('chatAvatar').textContent = t.creator.charAt(0).toUpperCase();
+        const col = getColor(t.creator || 'User');
+        document.getElementById('chatAvatar').textContent = (t.creator || 'U').charAt(0).toUpperCase();
         document.getElementById('chatAvatar').style.background = col + '15';
         document.getElementById('chatAvatar').style.color = col;
         document.getElementById('chatAvatar').style.borderColor = col + '22';
         document.getElementById('chatTitle').textContent = t.subject;
-        document.getElementById('chatMeta').textContent = 'by ' + t.creator + (t.robloxName ? ' • Roblox: ' + t.robloxName : '') + ' • ' + t.category;
+        document.getElementById('chatMeta').textContent = 'by ' + (t.creator || 'Bilinmiyor') + (t.robloxName ? ' • Roblox: ' + t.robloxName : '') + ' • ' + t.category;
 
         const statusEl = document.getElementById('chatStatus');
         if (t.status === 'open') { statusEl.textContent = 'Açık'; statusEl.className = 'pill pill-open'; }
