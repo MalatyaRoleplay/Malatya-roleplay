@@ -209,6 +209,7 @@
         <input type="text" id="loginRobloxInput" placeholder="Roblox İsminiz" maxlength="24" autocomplete="off">
         <input type="password" id="loginPassInput" placeholder="Bir şifre oluşturun" maxlength="24" autocomplete="off">
         <div style="font-size:0.65rem;color:rgba(255,255,255,0.15);margin-top:-8px;margin-bottom:12px;text-align:left">Bu şifre Roblox şifreniz değildir.</div>
+        <div id="loginError" style="display:none;color:#ff3d00;font-size:0.78rem;margin-bottom:10px;text-align:left"></div>
         <button id="loginBtn">Giriş Yap / Kayıt Ol</button>
     </div>
 </div>
@@ -381,7 +382,29 @@
     const loginRobloxInput = document.getElementById('loginRobloxInput');
     const loginPassInput = document.getElementById('loginPassInput');
     const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
     const savedUser = localStorage.getItem('mrp_chatname');
+
+    function showLoginError(msg) {
+        loginError.textContent = msg;
+        loginError.style.display = 'block';
+    }
+    function hideLoginError() {
+        loginError.style.display = 'none';
+    }
+    function resetLoginBorders() {
+        loginRobloxInput.style.borderColor = '';
+        loginPassInput.style.borderColor = '';
+    }
+
+    loginRobloxInput.addEventListener('input', function() {
+        this.style.borderColor = '';
+        hideLoginError();
+    });
+    loginPassInput.addEventListener('input', function() {
+        this.style.borderColor = '';
+        hideLoginError();
+    });
 
     if (savedUser) {
         loginOverlay.classList.add('hidden');
@@ -392,24 +415,62 @@
     }
 
     function enterSite() {
+        resetLoginBorders();
+        hideLoginError();
+
         const roblox = loginRobloxInput.value.trim();
         const pass = loginPassInput.value.trim();
-        if (!roblox || !pass) {
-            if (!roblox) loginRobloxInput.style.borderColor = '#ff3d00';
-            if (!pass) loginPassInput.style.borderColor = '#ff3d00';
+
+        if (!roblox && !pass) {
+            showLoginError('Lütfen Roblox isminizi ve şifrenizi girin.');
+            loginRobloxInput.style.borderColor = '#ff3d00';
+            loginPassInput.style.borderColor = '#ff3d00';
             return;
         }
-        localStorage.setItem('mrp_chatname', roblox);
-        localStorage.setItem('mrp_pass', pass);
+        if (!roblox) {
+            showLoginError('Roblox isminizi girin.');
+            loginRobloxInput.style.borderColor = '#ff3d00';
+            return;
+        }
+        if (!pass) {
+            showLoginError('Şifrenizi girin.');
+            loginPassInput.style.borderColor = '#ff3d00';
+            return;
+        }
+        if (pass.length < 4) {
+            showLoginError('Şifre en az 4 karakter olmalı.');
+            loginPassInput.style.borderColor = '#ff3d00';
+            return;
+        }
 
-        db.ref('users/' + roblox).set({
-            roblox: roblox,
-            password: pass,
-            ts: Date.now()
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Giriş yapılıyor...';
+
+        usersRef.child(roblox).once('value', function(snap) {
+            const existing = snap.val();
+
+            if (existing && existing.password && existing.password !== pass) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Giriş Yap / Kayıt Ol';
+                showLoginError('Şifre hatalı! Bu isimle kayıtlı farklı bir şifre var.');
+                loginPassInput.style.borderColor = '#ff3d00';
+                return;
+            }
+
+            localStorage.setItem('mrp_chatname', roblox);
+            localStorage.setItem('mrp_pass', pass);
+
+            db.ref('users/' + roblox).set({
+                roblox: roblox,
+                password: pass,
+                ts: Date.now()
+            });
+
+            loginOverlay.classList.add('hidden');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Giriş Yap / Kayıt Ol';
+            initChat();
         });
-
-        loginOverlay.classList.add('hidden');
-        initChat();
     }
 
     const myId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
