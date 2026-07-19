@@ -366,6 +366,17 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 (function(){
+    firebase.initializeApp({
+        apiKey: "AIzaSyBbmMoZyICIBLGEC6X379LTmrnFbmrLIaA",
+        authDomain: "malatya-rp-chat.firebaseapp.com",
+        databaseURL: "https://malatya-rp-chat-default-rtdb.firebaseio.com",
+        projectId: "malatya-rp-chat",
+        storageBucket: "malatya-rp-chat.firebasestorage.app",
+        messagingSenderId: "162600000014",
+        appId: "1:162600000014:web:bbd69fab110cd6657a3a5f"
+    });
+    const db = firebase.database();
+
     const loginOverlay = document.getElementById('loginOverlay');
     const loginRobloxInput = document.getElementById('loginRobloxInput');
     const loginPassInput = document.getElementById('loginPassInput');
@@ -400,17 +411,6 @@
         loginOverlay.classList.add('hidden');
         initChat();
     }
-
-    firebase.initializeApp({
-        apiKey: "AIzaSyBbmMoZyICIBLGEC6X379LTmrnFbmrLIaA",
-        authDomain: "malatya-rp-chat.firebaseapp.com",
-        databaseURL: "https://malatya-rp-chat-default-rtdb.firebaseio.com",
-        projectId: "malatya-rp-chat",
-        storageBucket: "malatya-rp-chat.firebasestorage.app",
-        messagingSenderId: "162600000014",
-        appId: "1:162600000014:web:bbd69fab110cd6657a3a5f"
-    });
-    const db = firebase.database();
 
     const myId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     const myRef = db.ref('online/' + myId);
