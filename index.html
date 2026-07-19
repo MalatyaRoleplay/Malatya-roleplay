@@ -159,6 +159,11 @@
         .ban-approve:hover{background:rgba(34,197,94,0.15)}
         .ban-reject{padding:5px 12px;border-radius:6px;border:1px solid rgba(255,52,0,0.15);background:rgba(255,52,0,0.05);color:#ff3d00;font-size:0.7rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
         .ban-reject:hover{background:rgba(255,52,0,0.1)}
+        .site-lock-banner{display:none;position:fixed;top:56px;left:0;right:0;z-index:999;background:rgba(255,52,0,0.1);border-bottom:1px solid rgba(255,52,0,0.2);padding:14px 24px;text-align:center;color:#ff3d00;font-size:0.85rem;font-weight:600;backdrop-filter:blur(12px)}
+        .site-lock-banner.show{display:block}
+        .site-lock-banner svg{width:18px;height:18px;vertical-align:middle;margin-right:6px}
+        .site-lock-overlay{display:none;position:fixed;inset:0;top:56px;z-index:50;background:rgba(0,0,0,0.3);backdrop-filter:blur(2px);pointer-events:none}
+        .site-lock-overlay.show{display:block}
 
         /* NEW TICKET MODAL */
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
@@ -234,10 +239,18 @@
             <div class="header-online"><span class="dot"></span> <span id="onlineCount">0</span> aktif</div>
             <button class="header-btn" id="roleToggle" style="display:none">Yetki Yönetimi</button>
             <button class="header-btn" id="usersToggle" style="display:none">Kullanıcılar</button>
+            <button class="header-btn" id="bannedToggle" style="display:none">Reddedilenler</button>
+            <button class="header-btn danger" id="siteLockBtn" style="display:none">🔒 Siteyi Kilit</button>
             <button class="header-btn danger" id="adminToggle" style="display:none">Yönetici</button>
         </div>
     </div>
 </header>
+
+<div class="site-lock-banner" id="siteLockBanner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    Site kilitlenmiştir. Yetkili açılana kadar işlemler durdurulmuştur.
+</div>
+<div class="site-lock-overlay" id="siteLockOverlay"></div>
 
 <div class="workspace">
     <aside class="sidebar" id="sidebar">
@@ -277,6 +290,11 @@
         <div class="role-section hidden" id="usersPanel">
             <h4>Kayıtlı Kullanıcılar</h4>
             <div id="usersList" style="max-height:160px;overflow-y:auto"></div>
+        </div>
+
+        <div class="role-section hidden" id="bannedPanel">
+            <h4>Reddedilenler <button id="bannedPanelClose">Kapat</button></h4>
+            <div id="bannedList" style="max-height:160px;overflow-y:auto"></div>
         </div>
 
         <div style="padding:6px 16px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:4px;align-items:center">
@@ -493,11 +511,13 @@
     const ticketsRef = db.ref('tickets');
     const usersRef = db.ref('users');
     const bannedAppealsRef = db.ref('bannedAppeals');
+    const siteSettingsRef = db.ref('settings');
     let allRoles = {};
     let allTickets = {};
     let allUsers = {};
     let allBannedAppeals = {};
     let currentTicket = null;
+    let siteLocked = false;
     let isStaff = false;
     let isAdmin = localStorage.getItem('mrp_admin') === 'true';
     const ADMIN_PASS = 'rylo2025';
@@ -567,6 +587,12 @@
             allBannedAppeals = snap.val() || {};
         });
 
+        siteSettingsRef.on('value', snap => {
+            const settings = snap.val() || {};
+            siteLocked = settings.siteLocked === true;
+            updateLockUI();
+        });
+
         updateUI();
     }
 
@@ -577,11 +603,47 @@
         isStaff = isStaffUser(name);
         document.getElementById('roleToggle').style.display = isStaff ? '' : 'none';
         document.getElementById('usersToggle').style.display = isStaff ? '' : 'none';
+        document.getElementById('bannedToggle').style.display = isStaff ? '' : 'none';
         document.getElementById('adminToggle').style.display = isAdmin ? '' : 'none';
+        document.getElementById('siteLockBtn').style.display = isStaff ? '' : 'none';
         document.getElementById('newTicketWrap').style.display = '';
         document.getElementById('closeTicketBtn').style.display = '';
         try { updateNameChangeVisibility(); } catch(e) {}
     }
+
+    function updateLockUI() {
+        const banner = document.getElementById('siteLockBanner');
+        const overlay = document.getElementById('siteLockOverlay');
+        const btn = document.getElementById('siteLockBtn');
+        if (siteLocked) {
+            banner.classList.add('show');
+            overlay.classList.add('show');
+            btn.textContent = '🔓 Siteyi Aç';
+            btn.classList.remove('danger');
+            btn.classList.add('header-btn');
+            document.getElementById('newTicketBtn').disabled = true;
+            document.getElementById('newTicketBtn').style.opacity = '0.3';
+            document.getElementById('chatMsg').disabled = true;
+            document.getElementById('chatMsg').placeholder = 'Site kilitli...';
+            document.getElementById('chatSend').disabled = true;
+        } else {
+            banner.classList.remove('show');
+            overlay.classList.remove('show');
+            btn.textContent = '🔒 Siteyi Kilit';
+            btn.classList.remove('danger');
+            btn.classList.add('header-btn');
+            document.getElementById('newTicketBtn').disabled = false;
+            document.getElementById('newTicketBtn').style.opacity = '';
+            document.getElementById('chatMsg').disabled = false;
+            document.getElementById('chatMsg').placeholder = 'Mesajınızı yazın...';
+            document.getElementById('chatSend').disabled = false;
+        }
+    }
+
+    document.getElementById('siteLockBtn').addEventListener('click', () => {
+        if (!isStaff) return;
+        siteSettingsRef.child('siteLocked').set(!siteLocked);
+    });
 
     // ROLE PANEL
     const roleSection = document.getElementById('roleSection');
