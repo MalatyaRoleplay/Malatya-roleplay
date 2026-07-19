@@ -203,7 +203,7 @@
 <header class="site-header">
     <div class="header-inner">
         <div class="header-brand">
-            <div class="header-brand-icon">MRP</div>
+            <img class="header-brand-icon" src="https://media.discordapp.net/attachments/1428798346067181658/1528426109190799451/image.png?ex=6a5e413d&is=6a5cefbd&hm=255a5d479acef1ef3d7c66b8dcde3f730fd4224158fe15cb3f6f1416645bf4ca&=&format=webp&quality=lossless&width=44&height=44" width="34" height="34" alt="Malatya RP" style="border-radius:8px">
             <div class="header-brand-text">Malatya RP <span>Canlı Destek</span></div>
         </div>
         <div class="header-right">
@@ -247,6 +247,11 @@
                 <button id="roleAddBtn">VER</button>
             </div>
             <div class="role-list" id="roleList"></div>
+        </div>
+
+        <div style="padding:10px 16px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:6px;align-items:center">
+            <input type="password" id="quickAdminInput" placeholder="Yönetici kodu..." style="flex:1;padding:6px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:6px;color:#fff;font-size:0.72rem;font-family:'Inter',sans-serif;outline:none">
+            <button id="quickAdminBtn" style="padding:6px 10px;border-radius:6px;border:none;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3);font-size:0.68rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Giriş</button>
         </div>
     </aside>
 
@@ -294,12 +299,15 @@
         <p>Destek ekibimiz en kısa sürede size yardımcı olacaktır.</p>
         <label>Konu</label>
         <input type="text" id="ticketSubject" placeholder="Sorununuzu kısaca açıklayın" maxlength="60">
+        <label>Roblox İsmi</label>
+        <input type="text" id="ticketRobloxName" placeholder="Roblox kullanıcı adınız" maxlength="30">
         <label>Kategori</label>
         <select id="ticketCategory">
             <option value="genel">Genel</option>
             <option value="sikayet">Şikayet</option>
             <option value="oneri">Öneri</option>
             <option value="bug">Hata Bildirimi</option>
+            <option value="banaffi">Ban Affı</option>
             <option value="diger">Diğer</option>
         </select>
         <label>Mesajınız</label>
@@ -537,6 +545,28 @@
         }
     });
 
+    // QUICK ADMIN
+    const quickAdminInput = document.getElementById('quickAdminInput');
+    const quickAdminBtn = document.getElementById('quickAdminBtn');
+
+    quickAdminBtn.addEventListener('click', () => {
+        const val = quickAdminInput.value.trim();
+        if (val === ADMIN_PASS) {
+            isAdmin = true;
+            localStorage.setItem('mrp_admin', 'true');
+            quickAdminInput.value = '';
+            quickAdminBtn.textContent = 'Giriş yapıldı ✓';
+            quickAdminBtn.style.color = '#22c55e';
+            setTimeout(() => { quickAdminBtn.textContent = 'Giriş'; quickAdminBtn.style.color = ''; }, 2000);
+            updateUI();
+        } else {
+            quickAdminBtn.textContent = 'Yanlış!';
+            quickAdminBtn.style.color = '#ff3d00';
+            setTimeout(() => { quickAdminBtn.textContent = 'Giriş'; quickAdminBtn.style.color = ''; }, 1500);
+        }
+    });
+    quickAdminInput.addEventListener('keydown', e => { if (e.key === 'Enter') quickAdminBtn.click(); });
+
     // TICKETS
     const newTicketBtn = document.getElementById('newTicketBtn');
     const newTicketModal = document.getElementById('newTicketModal');
@@ -552,6 +582,7 @@
         newTicketModal.classList.add('active');
         ticketSubject.value = '';
         ticketMessage.value = '';
+        document.getElementById('ticketRobloxName').value = '';
         ticketCategory.selectedIndex = 0;
         ticketSubject.focus();
     });
@@ -559,14 +590,16 @@
 
     modalOk.addEventListener('click', () => {
         const subj = ticketSubject.value.trim();
+        const robloxName = document.getElementById('ticketRobloxName').value.trim();
         const msg = ticketMessage.value.trim();
         const cat = ticketCategory.value;
         const name = getMyName();
-        if (!subj || !msg || !name) return;
+        if (!subj || !robloxName || !msg || !name) return;
 
         const ticketId = 'ticket_' + Date.now();
         ticketsRef.child(ticketId).set({
             subject: subj,
+            robloxName: robloxName,
             category: cat,
             creator: name,
             status: 'open',
@@ -583,7 +616,7 @@
 
         ticketsRef.child(ticketId).child('messages').push({
             name: 'Sistem',
-            text: name + ' bilet açtı — ' + subj,
+            text: name + ' bilet açtı — ' + subj + ' (Roblox: ' + robloxName + ')',
             ts: Date.now(),
             system: true
         });
@@ -651,7 +684,7 @@
         document.getElementById('chatAvatar').style.color = col;
         document.getElementById('chatAvatar').style.borderColor = col + '22';
         document.getElementById('chatTitle').textContent = t.subject;
-        document.getElementById('chatMeta').textContent = 'by ' + t.creator + ' • ' + t.category;
+        document.getElementById('chatMeta').textContent = 'by ' + t.creator + (t.robloxName ? ' • Roblox: ' + t.robloxName : '') + ' • ' + t.category;
 
         const statusEl = document.getElementById('chatStatus');
         if (t.status === 'open') { statusEl.textContent = 'Açık'; statusEl.className = 'pill pill-open'; }
