@@ -220,6 +220,10 @@
             <div class="header-brand-text">Malatya RP <span>Canlı Destek</span></div>
         </div>
         <div class="header-right">
+            <div style="display:none;align-items:center;gap:6px" id="nameChangeWrap">
+                <input type="text" id="nameChangeInput" placeholder="İsmin..." maxlength="24" autocomplete="off" style="width:100px;padding:5px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;color:#fff;font-size:0.75rem;font-family:'Inter',sans-serif;outline:none">
+                <button id="nameChangeBtn" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(58,134,255,0.1);color:#3a86ff;font-size:0.7rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Değiştir</button>
+            </div>
             <div class="header-online"><span class="dot"></span> <span id="onlineCount">0</span> aktif</div>
             <button class="header-btn" id="roleToggle" style="display:none">Yetki Yönetimi</button>
             <button class="header-btn" id="usersToggle" style="display:none">Kullanıcılar</button>
@@ -498,6 +502,7 @@
         document.getElementById('adminToggle').style.display = isAdmin ? '' : 'none';
         document.getElementById('newTicketWrap').style.display = '';
         document.getElementById('closeTicketBtn').style.display = '';
+        try { updateNameChangeVisibility(); } catch(e) {}
     }
 
     // ROLE PANEL
@@ -874,6 +879,46 @@
             el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
         });
     });
+
+    // NAME CHANGE
+    const nameChangeWrap = document.getElementById('nameChangeWrap');
+    const nameChangeInput = document.getElementById('nameChangeInput');
+    const nameChangeBtn = document.getElementById('nameChangeBtn');
+
+    function updateNameChangeVisibility() {
+        const name = getMyName();
+        const staff = isStaffUser(name);
+        if (staff) {
+            nameChangeWrap.style.display = 'flex';
+            nameChangeInput.value = name;
+        } else {
+            nameChangeWrap.style.display = 'none';
+        }
+    }
+
+    nameChangeBtn.addEventListener('click', () => {
+        const newName = nameChangeInput.value.trim();
+        if (!newName) return;
+        const oldName = getMyName();
+
+        const role = allRoles[oldName];
+        if (role) {
+            rolesRef.child(newName).set(role);
+            rolesRef.child(oldName).remove();
+        }
+
+        const userData = allUsers[oldName];
+        if (userData) {
+            usersRef.child(newName).set(userData);
+            usersRef.child(oldName).remove();
+        }
+
+        localStorage.setItem('mrp_chatname', newName);
+        updateUI();
+        updateNameChangeVisibility();
+    });
+
+    nameChangeInput.addEventListener('keydown', e => { if (e.key === 'Enter') nameChangeBtn.click(); });
 
     // MOBILE
     const mobileBack = document.getElementById('mobileBack');
