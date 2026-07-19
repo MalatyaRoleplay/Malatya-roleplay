@@ -734,9 +734,9 @@
     modalCancel.addEventListener('click', () => newTicketModal.classList.remove('active'));
 
     modalOk.addEventListener('click', () => {
-        const subj = ticketSubject.value.trim();
+        const subj = filtrele(ticketSubject.value.trim());
         const robloxName = document.getElementById('ticketRobloxName').value.trim();
-        const msg = ticketMessage.value.trim();
+        const msg = filtrele(ticketMessage.value.trim());
         const cat = ticketCategory.value;
         const name = getMyName();
         if (!subj || !robloxName || !msg || !name) return;
