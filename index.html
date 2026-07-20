@@ -529,6 +529,7 @@
     let isStaff = false;
     let isAdmin = localStorage.getItem('mrp_admin') === 'true';
     const ADMIN_PASS = 'rylo2025';
+    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1528733710197854308/FXMlisk8zg2PSTlsFGPpPj35LOztlw_aQSxAQG6Tyc3EV_25ThwcDEvdOPNwWFtzBe4j';
     const COOLDOWN = 4000;
     let lastSendTime = 0;
 
@@ -547,6 +548,44 @@
 
     function isBannedUser(name) {
         return allBans[name] === true;
+    }
+
+    function sendTicketToDiscord(ticket, deletedBy) {
+        if (!DISCORD_WEBHOOK_URL) return;
+        const catLabels = { genel:'Genel', sikayet:'Şikayet', oneri:'Öneri', bug:'Hata Bildirimi', banaffi:'Ban Affı', diger:'Diğer' };
+        const statusLabels = { open:'Açık', answered:'Yanıtlandı', closed:'Kapalı' };
+        let msgLines = '';
+        if (ticket.messages) {
+            Object.values(ticket.messages).sort((a,b) => a.ts - b.ts).forEach(m => {
+                const t = new Date(m.ts).toLocaleString('tr-TR');
+                if (m.system) {
+                    msgLines += '**[Sistem]** ' + m.text + ' (' + t + ')\n';
+                } else {
+                    msgLines += '**[' + m.name + ']** ' + m.text + ' (' + t + ')\n';
+                }
+            });
+        }
+        if (msgLines.length > 4000) msgLines = msgLines.substring(0, 4000) + '\n... (kesildi)';
+        const embed = {
+            title: 'Bilet Silindi — ' + (ticket.subject || 'Konu yok'),
+            color: 0xff3d00,
+            fields: [
+                { name: 'Kategori', value: catLabels[ticket.category] || ticket.category || '—', inline: true },
+                { name: 'Durum', value: statusLabels[ticket.status] || ticket.status || '—', inline: true },
+                { name: 'Oluşturan', value: ticket.creator || '—', inline: true },
+                { name: 'Roblox', value: ticket.robloxName || '—', inline: true },
+                { name: 'Silen', value: deletedBy || '—', inline: true },
+                { name: 'Tarih', value: new Date(ticket.ts).toLocaleString('tr-TR'), inline: true }
+            ],
+            description: msgLines || 'Mesaj yok',
+            footer: { text: 'Malatya RP Canlı Destek' },
+            timestamp: new Date().toISOString()
+        };
+        fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ embeds: [embed] })
+        }).catch(() => {});
     }
 
     function getColor(name) {
@@ -707,6 +746,10 @@
     document.getElementById('clearAllTickets').addEventListener('click', () => {
         if (!confirm('TÜM biletleri silmek istediğine emin misin? Bu işlem geri alınamaz!')) return;
         if (!confirm('Son uyarı: Tüm biletler kalıcı olarak silinecek!')) return;
+        const name = getMyName();
+        Object.entries(allTickets).forEach(([id, t]) => {
+            sendTicketToDiscord(t, name + ' (toplu silme)');
+        });
         ticketsRef.remove();
         currentTicket = null;
         document.getElementById('chatActive').classList.add('hidden');
@@ -1061,6 +1104,8 @@
     document.getElementById('closeTicketBtn').addEventListener('click', () => {
         if (!currentTicket) return;
         if (!confirm('Bu bileti silmek istediğine emin misin?')) return;
+        const t = allTickets[currentTicket];
+        if (t) sendTicketToDiscord(t, getMyName());
         ticketsRef.child(currentTicket).remove();
         currentTicket = null;
         document.getElementById('chatActive').classList.add('hidden');
