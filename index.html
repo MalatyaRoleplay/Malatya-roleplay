@@ -581,11 +581,10 @@
             footer: { text: 'Malatya RP Canlı Destek' },
             timestamp: new Date().toISOString()
         };
-        fetch(DISCORD_WEBHOOK_URL, {
+        fetch('/api/webhook', {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
+            body: JSON.stringify({ embed: embed })
         }).catch(() => {});
     }
 
