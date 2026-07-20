@@ -136,6 +136,10 @@
         .msg-text{font-size:0.84rem;color:rgba(255,255,255,0.65);line-height:1.45;word-wrap:break-word}
         .msg-delete{position:absolute;right:0;top:8px;opacity:0;padding:3px 7px;border-radius:4px;border:none;background:rgba(255,52,0,0.08);color:#ff3d00;font-size:0.62rem;font-weight:600;cursor:pointer;transition:opacity .15s;font-family:'Inter',sans-serif}
         .msg-delete:hover{background:rgba(255,52,0,0.15)}
+        .msg-ban{padding:2px 6px;border-radius:4px;border:1px solid rgba(255,140,0,0.15);background:rgba(255,140,0,0.08);color:#ff8c00;font-size:0.58rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+        .msg-ban:hover{background:rgba(255,140,0,0.15)}
+        .msg-unban{padding:2px 6px;border-radius:4px;border:1px solid rgba(34,197,94,0.15);background:rgba(34,197,94,0.08);color:#22c55e;font-size:0.58rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+        .msg-unban:hover{background:rgba(34,197,94,0.15)}
         .msg-system{text-align:center;padding:12px 0;font-size:0.72rem;color:rgba(255,255,255,0.2)}
         .msg-system span{background:rgba(255,255,255,0.04);padding:4px 12px;border-radius:12px}
 
@@ -240,6 +244,8 @@
             <button class="header-btn" id="roleToggle" style="display:none">Yetki Yönetimi</button>
             <button class="header-btn" id="usersToggle" style="display:none">Kullanıcılar</button>
             <button class="header-btn" id="bannedToggle" style="display:none">Reddedilenler</button>
+            <button class="header-btn" id="banPanelToggle" style="display:none">Ban Paneli</button>
+            <button class="header-btn danger" id="clearAllTickets" style="display:none">Tüm Biletleri Sil</button>
             <button class="header-btn danger" id="siteLockBtn" style="display:none">🔒 Siteyi Kilit</button>
             <button class="header-btn danger" id="adminToggle" style="display:none">Yönetici</button>
         </div>
@@ -293,8 +299,8 @@
         </div>
 
         <div class="role-section hidden" id="bannedPanel">
-            <h4>Reddedilenler <button id="bannedPanelClose">Kapat</button></h4>
-            <div id="bannedList" style="max-height:160px;overflow-y:auto"></div>
+            <h4>Banlı Kullanıcılar <button id="bannedPanelClose">Kapat</button></h4>
+            <div id="bannedList" style="max-height:200px;overflow-y:auto"></div>
         </div>
 
         <div style="padding:6px 16px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:4px;align-items:center">
@@ -511,11 +517,13 @@
     const ticketsRef = db.ref('tickets');
     const usersRef = db.ref('users');
     const bannedAppealsRef = db.ref('bannedAppeals');
+    const bansRef = db.ref('bans');
     const siteSettingsRef = db.ref('settings');
     let allRoles = {};
     let allTickets = {};
     let allUsers = {};
     let allBannedAppeals = {};
+    let allBans = {};
     let currentTicket = null;
     let siteLocked = false;
     let isStaff = false;
@@ -535,6 +543,10 @@
 
     function isStaffUser(name) {
         return isAdmin || hasPermission(name, 'yetkili');
+    }
+
+    function isBannedUser(name) {
+        return allBans[name] === true;
     }
 
     function getColor(name) {
@@ -587,6 +599,11 @@
             allBannedAppeals = snap.val() || {};
         });
 
+        bansRef.on('value', snap => {
+            allBans = snap.val() || {};
+            renderBansPanel();
+        });
+
         siteSettingsRef.on('value', snap => {
             const settings = snap.val() || {};
             siteLocked = settings.siteLocked === true;
@@ -604,6 +621,8 @@
         document.getElementById('roleToggle').style.display = isStaff ? '' : 'none';
         document.getElementById('usersToggle').style.display = isStaff ? '' : 'none';
         document.getElementById('bannedToggle').style.display = isStaff ? '' : 'none';
+        document.getElementById('banPanelToggle').style.display = isStaff ? '' : 'none';
+        document.getElementById('clearAllTickets').style.display = isStaff ? '' : 'none';
         document.getElementById('adminToggle').style.display = isAdmin ? '' : 'none';
         document.getElementById('siteLockBtn').style.display = isStaff ? '' : 'none';
         document.getElementById('newTicketWrap').style.display = '';
@@ -643,6 +662,57 @@
     document.getElementById('siteLockBtn').addEventListener('click', () => {
         if (!isStaff) return;
         siteSettingsRef.child('siteLocked').set(!siteLocked);
+    });
+
+    // BAN PANEL
+    const banPanelToggle = document.getElementById('banPanelToggle');
+    const bannedPanel = document.getElementById('bannedPanel');
+    const bannedPanelClose = document.getElementById('bannedPanelClose');
+    const bannedList = document.getElementById('bannedList');
+
+    banPanelToggle.addEventListener('click', () => {
+        bannedPanel.classList.toggle('hidden');
+        document.getElementById('roleSection').classList.add('hidden');
+        document.getElementById('usersPanel').classList.add('hidden');
+    });
+    bannedPanelClose.addEventListener('click', () => bannedPanel.classList.add('hidden'));
+
+    function renderBansPanel() {
+        const entries = Object.entries(allBans).filter(([,v]) => v === true || (v && v.banned));
+        if (!entries.length) {
+            bannedList.innerHTML = '<div style="color:rgba(255,255,255,0.15);font-size:0.75rem;text-align:center;padding:10px">Banlı kullanıcı yok</div>';
+            return;
+        }
+        bannedList.innerHTML = entries.map(([name, val]) => {
+            const info = typeof val === 'object' ? val : {};
+            const reason = info.reason || 'Belirtilmemiş';
+            const bannedBy = info.bannedBy || '—';
+            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:4px;font-size:0.75rem;border-bottom:1px solid rgba(255,255,255,0.03)">
+                <div style="color:rgba(255,255,255,0.7);display:flex;flex-direction:column;gap:1px">
+                    <span style="font-weight:600;color:#ff3d00">${name}</span>
+                    <span style="font-size:0.65rem;color:rgba(255,255,255,0.25)">Sebep: ${reason} • Banlayan: ${bannedBy}</span>
+                </div>
+                <button onclick="window._unbanUser('${name}')" style="padding:3px 8px;border-radius:4px;border:1px solid rgba(34,197,94,0.2);background:rgba(34,197,94,0.08);color:#22c55e;font-size:0.6rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Kaldır</button>
+            </div>`;
+        }).join('');
+    }
+
+    window._unbanUser = function(name) {
+        if (confirm(name + ' banı kaldırılsın mı?')) {
+            bansRef.child(name).remove();
+        }
+    };
+
+    // CLEAR ALL TICKETS
+    document.getElementById('clearAllTickets').addEventListener('click', () => {
+        if (!confirm('TÜM biletleri silmek istediğine emin misin? Bu işlem geri alınamaz!')) return;
+        if (!confirm('Son uyarı: Tüm biletler kalıcı olarak silinecek!')) return;
+        ticketsRef.remove();
+        currentTicket = null;
+        document.getElementById('chatActive').classList.add('hidden');
+        document.getElementById('chatActive').style.display = 'none';
+        document.getElementById('chatEmpty').classList.remove('hidden');
+        document.getElementById('chatEmpty').style.display = '';
     });
 
     // ROLE PANEL
@@ -804,6 +874,8 @@
         const name = getMyName();
         if (!subj || !robloxName || !msg || !name) return;
 
+        if (isBannedUser(name)) { alert('Banlandığınız için bilet açamazsınız.'); return; }
+
         if (cat === 'banaffi' && allBannedAppeals[robloxName]) {
             alert('Ban affı talebiniz daha önce reddedilmiştir. Tekrar ban affı bileti açamazsınız.');
             return;
@@ -941,12 +1013,17 @@
             }
             const col = getColor(m.name);
             const canDel = staff || m.name === name;
+            const canBan = staff && !isStaffUser(m.name) && m.name !== name && !isBannedUser(m.name);
+            const isBanned = isBannedUser(m.name);
             html += `<div class="msg">
                 <div class="msg-avatar" style="color:${col};background:${col}15;border:1px solid ${col}22">${m.name.charAt(0).toUpperCase()}</div>
                 <div class="msg-content">
                     <div class="msg-header">
                         <span class="msg-name" style="color:${col}">${m.name}</span>
                         ${getRoleBadge(m.name)}
+                        ${isBanned ? '<span class="role-badge" style="background:rgba(255,52,0,0.15);color:#ff3d00;border:1px solid rgba(255,52,0,0.2)">BANLI</span>' : ''}
+                        ${canBan ? '<button class="msg-ban" style="position:static;opacity:1" onclick="window._banUser(\'' + m.name + '\')">Banla</button>' : ''}
+                        ${isBanned && staff ? '<button class="msg-unban" style="position:static;opacity:1" onclick="window._unbanUser(\'' + m.name + '\')">Banı Kaldır</button>' : ''}
                         <span class="msg-time">${timeAgo(m.ts)}</span>
                     </div>
                     <div class="msg-text">${m.text}</div>
@@ -963,6 +1040,20 @@
     window._deleteMsg = function(ticketId, msgKey) {
         if (confirm('Bu mesajı silmek istediğine emin misin?')) {
             ticketsRef.child(ticketId + '/messages/' + msgKey).remove();
+        }
+    };
+
+    window._banUser = function(targetName) {
+        if (!targetName) return;
+        const name = getMyName();
+        if (confirm(targetName + ' kullanıcısını banlamak istediğine emin misin?\n\nBanlanan kullanıcı mesaj gönderemez ve bilet açamaz.')) {
+            const reason = prompt('Ban sebebi (isteğe bağlı):') || 'Belirtilmemiş';
+            bansRef.child(targetName).set({
+                banned: true,
+                reason: reason,
+                bannedBy: name,
+                ts: Date.now()
+            });
         }
     };
 
@@ -1026,6 +1117,8 @@
         const name = getMyName();
         let text = chatMsg.value.trim();
         if (!name || !text) return;
+
+        if (isBannedUser(name)) { alert('Banlandığınız için mesaj gönderemezsiniz.'); return; }
 
         const t = allTickets[currentTicket];
         if (t && t.status === 'closed') { alert('Bu bilet kapatılmış.'); return; }
