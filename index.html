@@ -478,32 +478,50 @@
         }
 
         loginBtn.disabled = true;
-        loginBtn.textContent = 'Giriş yapılıyor...';
+        loginBtn.textContent = 'Roblox doğrulanıyor...';
 
-        usersRef.child(roblox).once('value', function(snap) {
-            const existing = snap.val();
-
-            if (existing && existing.password && existing.password !== pass) {
+        fetch('/api/verify-roblox', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: roblox })
+        }).then(r => r.json()).then(verify => {
+            if (!verify.valid) {
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Giriş Yap / Kayıt Ol';
-                showLoginError('Şifre hatalı! Bu isimle kayıtlı farklı bir şifre var.');
-                loginPassInput.style.borderColor = '#ff3d00';
+                showLoginError(verify.error || 'Roblox kullanıcı adı doğrulanamadı.');
+                loginRobloxInput.style.borderColor = '#ff3d00';
                 return;
             }
 
-            localStorage.setItem('mrp_chatname', roblox);
-            localStorage.setItem('mrp_pass', pass);
+            usersRef.child(roblox).once('value', function(snap) {
+                const existing = snap.val();
 
-            db.ref('users/' + roblox).set({
-                roblox: roblox,
-                password: pass,
-                ts: Date.now()
+                if (existing && existing.password && existing.password !== pass) {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Giriş Yap / Kayıt Ol';
+                    showLoginError('Şifre hatalı! Bu isimle kayıtlı farklı bir şifre var.');
+                    loginPassInput.style.borderColor = '#ff3d00';
+                    return;
+                }
+
+                localStorage.setItem('mrp_chatname', roblox);
+                localStorage.setItem('mrp_pass', pass);
+
+                db.ref('users/' + roblox).set({
+                    roblox: roblox,
+                    password: pass,
+                    ts: Date.now()
+                });
+
+                loginOverlay.classList.add('hidden');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Giriş Yap / Kayıt Ol';
+                initChat();
             });
-
-            loginOverlay.classList.add('hidden');
+        }).catch(() => {
             loginBtn.disabled = false;
             loginBtn.textContent = 'Giriş Yap / Kayıt Ol';
-            initChat();
+            showLoginError('Doğrulama sırasında hata oluştu. Tekrar deneyin.');
         });
     }
 
